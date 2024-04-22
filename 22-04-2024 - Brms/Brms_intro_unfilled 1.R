@@ -78,14 +78,6 @@ mod_sim1$fit
 #Inspect pp: posterior prediction
 pp_check(mod_sim1)
 
-est1 <- fitted(mod_sim1)%>%as_tibble()
-sim1_est1 <- sim1%>%mutate(est1)
-ggplot(sim1_est1, aes(x = Size, y = Fecundity))+
-  geom_point(size = 1, color = 'blue')+
-  geom_line(aes(y = Estimate))+
-  labs(title = "model expected prediction (marginal means) from simulation")
-  
-
 
 #Now try with a model in line with our simulated data
 form_loglepi <- bf(logfecundity ~ logsize)
@@ -167,7 +159,8 @@ ggplot(lepi, aes(x = Size, Fecundity))+
 #If we are happy with the formula, we can proceed with it
 form_loglepi 
 
-#Define a prior
+#Define a prior. If you doubt what parameters the model want priors for, check them out using get_prior()
+prior_loglepi<- c(
   set_prior("normal(...)", class = "..."),
   set_prior("normal(...)", class = "..."),
   set_prior("cauchy(...)", class = "...")
@@ -189,7 +182,7 @@ mod_loglepi$fit
 pp_check(mod_loglepi)
 
 #generate expected prediction
-est3 <- fitted(...)
+est3 <- fitted(...
 lepi_est <- lepi%>%mutate(est3)
 
 ggplot(lepi_est, aes(x = Size, y = Fecundity))+
@@ -229,7 +222,7 @@ ggtree(lepi_informedtree, size=0.5, ladderize = F)+
 
 form_lepiphylo <- bf(logfecundity ~ 0 + Intercept + logsize + (0+logsize|gr(Species, cov = vcv)))
 #notice the gr(Species, cov = ...) that informs the model on the phylogenetic-based covariance
-#also notice the 0 + Intercept + logsize, which is equivalent to logsize: fit an intercept and a slope. But 
+#also notice the 0 + Intercept + logsize, which is equivalent to logsize: fit an intercept and a slope. But, slightly different.
 
 #calculate the phylogenetic variancecovariance matrix
 lepi_cov <- vcv.phylo(lepi_tree)
