@@ -1,0 +1,8 @@
+plant_nr	Plot	fruit_count
+1	A	5
+2	A	10
+4	A	6
+5	A	14
+7	B	7
+8	B	2
+10	B	9
