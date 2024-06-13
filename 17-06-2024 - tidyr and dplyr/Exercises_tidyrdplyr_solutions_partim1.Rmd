@@ -29,6 +29,9 @@ The goal of tidyr is to help you create tidy data. Tidy data is data where:
 * Each observation is a row; each row is an observation.
 * Each value is a cell; each cell is a single value.
 
+There are cheatsheets to help you find/remember the right functions!  
+https://rstudio.github.io/cheatsheets/html/tidyr.html
+
 ### 1. How tidy or untidy is this dataset and how to solve it?
 
 This is a dataset of measurements of plants in 2 plots. Four things were measured: infloresence height, leaf length and width, root length. Which aspects are untidy?
@@ -58,6 +61,8 @@ In itself, the dataset is quite tidy (rows/observations are on the level of indi
 strawberries <- read.table("data/strawberry_fruits_tidyr.txt", header=T) 
 head(strawberries)
 
+strawberries_wide <- strawberries %>%
+  
 ```
 
 Just as a **sidenote**, real datasets often exists of several of such small blocks of such challenges (but they can be split up in small blocks luckily!). For instance, this sample of data was part of a larger dataset with data from several years of the same plants, several sample moments within years, from several locations, etc. In the end, you just have to find a way to define these blocks and then work towards solutions and put those together. To efficiently do this, you need experience in both knowing what you can do with your packages and have an idea of types of data format (the ideas of data manipulation) and how to then solve the blocks of problems (the syntax of data manipulation). Both come with a lot of practice!
@@ -65,6 +70,10 @@ Just as a **sidenote**, real datasets often exists of several of such small bloc
 
 
 ## Data manipulation with dplyr
+
+There are cheatsheets to help you find/remember the right functions!  
+https://rstudio.github.io/cheatsheets/html/data-transformation.html
+
 
 ### 1. Calculate new variables
 
@@ -214,7 +223,11 @@ Challenge: to have a better overview of the summary, I would like a column with 
 Tip: combine pivot_longer and pivot_wider
 
 ```{r}
-plants_summary %>% 
+plants_summary %>% pivot_longer(cols = everything(), 
+                                names_to="type_measurement",
+                                values_to = "value") %>%
+  separate_wider_delim(col=type_measurement, delim=".", names=c("type_measurement", "type_value")) %>%
+  pivot_wider(names_from=type_value, values_from=value)
 ```
 
 
@@ -226,7 +239,6 @@ An extra dataset is collected with number of fruits per plant.
     + extra: replace NA's with zeros
 2. Make a dataset with plants that did not have fruits
 3. Make a dataset with only plants that have both types of measurements
-
 4. extra: count how many data is overlapping (shared) between both datasets and how much data is unique to each dataset.
 
 
@@ -279,9 +291,22 @@ leafdamage <- read.table("data/leafdamage_dplyr.txt", header=T)
 head(fruits)
 head(leafdamage)
 
+
+## Fruit ====
+#average across al fruits measured for a plant; fruits are considered cumulative
+fruit_meanvol <- fruits %>% 
+
+## Leaf damage ====
+#average of the mean of each season
+leafdamage_summary <- leafdamage %>% 
+
+## Joining the datasets
+leafdamage_summary %>% 
+
 ```
 
 
 ## Tips & tricks
 
-To be dynamically added...
+To be dynamically added during the session...
+

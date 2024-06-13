@@ -29,6 +29,9 @@ The goal of tidyr is to help you create tidy data. Tidy data is data where:
 * Each observation is a row; each row is an observation.
 * Each value is a cell; each cell is a single value.
 
+There are cheatsheets to help you find/remember the right functions!  
+https://rstudio.github.io/cheatsheets/html/tidyr.html
+
 ### 1. How tidy or untidy is this dataset and how to solve it?
 
 This is a dataset of measurements of plants in 2 plots. Four things were measured: infloresence height, leaf length and width, root length. Which aspects are untidy?
@@ -42,7 +45,7 @@ summary(plants)
 
 ```{r tidy plant measurements}
 plants_tidy <- plants %>%
-  
+
 ```
 
 ### 3. Challenge: harder exercise
@@ -65,21 +68,27 @@ Just as a **sidenote**, real datasets often exists of several of such small bloc
 
 ## Data manipulation with dplyr
 
+There are cheatsheets to help you find/remember the right functions!  
+https://rstudio.github.io/cheatsheets/html/data-transformation.html
+
+
 ### 1. Calculate new variables
 
 1. calculate the leaf area
 2. calculate the fraction of leaf length to inflorescence length
-3. calculate scaled variables with mean 0 and sd 1 for each variable (z-score) (hint: there is a faster way then manually defining each variable... with across()...)
-    + extra: try once to mutate the table as a whole (columns are changed), and then alternatively, to add it to the end of the table to keep the original data in the same dataframe
+3. calculate scaled variables with mean 0 and sd 1 for each variable (z-score)
+    + extra: try once to mutate the table as a whole, and then alternatively, to add it to the end of the table to keep the original data in the same dataframe
 
 ```{r mutate variables}
 plants_mp <- plants_tidy %>%
   #1. leaf area
   #2. fraction inflorescence length
 
-# 3. calculate scaled variables with mean 0 and sd 1 for each variable (z-score)
-plants_mp_z <- plants_mp %>% 
+#mutate the whole table
+plants_mp_z <- plants_mp %>%
 
+#add scaled variables to the existing data
+plants_mp_z_all <- plants_mp %>%
 ```
 
 ### 2. Select variables
@@ -91,9 +100,9 @@ plants_mp_z <- plants_mp %>%
 #1. select only the leaf variables (including plant number and plot)
 plants_select <- plants_tidy %>%
 
+
 #2. change the positions of the length and width column in the original dataset
 plants_relocate <- plants_tidy %>%
-
 ```
 
 ### 3. Extract and arrange values
@@ -115,7 +124,7 @@ plants_tidy %>%
 plants_tidy %>% 
 
 #4. Sample 5 random rows
-plants_tidy %>% 
+plants_tidy %>%
 
 #5. order the dataset according to the infloresence length
 plants_tidy %>% 
@@ -126,7 +135,7 @@ plants_tidy %>%
 
 1. calculate average length and sd of roots
 2. calculate average length and sd of all columns
-    + extra: change the name of columns into 'var.mean' instead of the standard 'var_mean'
+    + extra: change the name of columns into 'root.mean' instead of the standard 'root_mean'
 3. calculate average length and sd of roots per plot
 4. calculate average length and sd of all columns per plot
 5. calculate number of observations per plot
@@ -135,8 +144,10 @@ plants_tidy %>%
 #1. calculate average length and sd of roots
 plants_tidy %>%
 
-#2. calculate average length and sd of all columns (again, think of across())
+#2. calculate average length and sd of all columns
 plants_tidy %>%
+# + extra
+plants_summary <- plants_tidy %>%
 
 #3. calculate average length and sd of roots per plot
 plants_tidy %>%
@@ -146,9 +157,7 @@ plants_tidy %>%
 
 #5. calculate number of observations per plot
 plants_tidy %>%
-
-#extra info: to calculate unique values of a certain variable
-plants_tidy %>%
+ 
 ``` 
 
 ### 5. Challenge: pivot your summaries
@@ -157,7 +166,7 @@ Challenge: to have a better overview of the summary, I would like a column with 
 Tip: combine pivot_longer and pivot_wider
 
 ```{r}
-plants_summary %>%
+plants_summary %>% 
 ```
 
 
@@ -169,7 +178,6 @@ An extra dataset is collected with number of fruits per plant.
     + extra: replace NA's with zeros
 2. Make a dataset with plants that did not have fruits
 3. Make a dataset with only plants that have both types of measurements
-
 4. extra: count how many data is overlapping (shared) between both datasets and how much data is unique to each dataset.
 
 
@@ -181,12 +189,13 @@ head(fruits)
 #1. Add the extra information to the plant dataset as a column
 all_data <- plants_tidy %>% 
 #+ replace NA's with zeros
+all_data %>% 
 
 #2. Make a dataset with plants that did not have fruits
-no_fruits <- plants_tidy %>% 
+no_fruits <- 
 
 #3. Make a dataset with only plants that have both types of measurements
-inner_data <- plants_tidy %>% 
+inner_data <-  
 
 #If there would be extra plants in the fruit count data, without plants being present in the plant measurement data, a full_join would place all values in one dataset and fill out missing values from both datasets with NA's
 
@@ -198,6 +207,7 @@ no_fruits %>%
 #unique to fruit data
 fruits %>% 
 ```
+
 ### 7. Challenge: harder exercise
 
 Again a sample of a dataset of the wild strawberries...
@@ -225,90 +235,15 @@ fruit_meanvol <- fruits %>%
 
 ## Leaf damage ====
 #average of the mean of each season
-leafdamage_summary <- leafdamage %>% filter(YEAR==2022) %>%
-  #filter(SEASON=="S2") %>%
-  group_by(PLANTID, SEASON) %>%
-  summarise(MEAN_LD = mean(PERCENTDAMAGE),
-            CV_LD = sd(PERCENTDAMAGE)/mean(PERCENTDAMAGE),
-            MAX_LD = max(PERCENTDAMAGE)) %>%
-  ungroup() %>%  group_by(PLANTID) %>%
-  summarise(MEAN_LD = mean(MEAN_LD, na.rm=T),
-            CV_LD = mean(CV_LD, na.rm=T),
-            MAX_LD = max(MAX_LD))
+leafdamage_summary <- leafdamage %>% 
 
-## Join the datasets
-leafdamage_summary %>%
+## Joining the datasets
+leafdamage_summary %>% 
 
 ```
 
 
 ## Tips & tricks
 
-### Piping your dataset directly into ggplot2
-```{r}
-#no need to first define a dataset, then give it to ggplot, all in one flow:
-plants %>%
-  pivot_wider(names_from="part", values_from="length") %>%
-  separate_wider_delim(col = leaf, delim="/", names=c("leaf_length", "leaf_width")) %>%
-  ggplot(aes(x=leaf_length, y=leaf_width, col=Plot)) +
-  geom_point()
-```
+To be dynamically added during the session...
 
-### assign variable on the other side of the pipe
-```{r}
-#first doing your pipeline, and only at the end assign it a variable with -> (instead of <- at the beginning)
-plants %>%
-  pivot_wider(names_from="part", values_from="length") %>%
-  separate_wider_delim(col = leaf, delim="/", names=c("leaf_length", "leaf_width")) -> plants_cleaned
-```
-
-### !!sym(variable_name) in loop/function
-If I want to loop over variable names and want to do a manipulation or plot a certain variable, it doesn't work to just give the name of the variable. You have to let R now it has to see it as a variable name (a column name). You have work arounds (looping over indices etc), but sometimes it's much easier to just work with the names themselves (to easily select/mutate/plot... your variable within your function or loop). 
-!!sym() makes a symbol of a given string and makes it operable for R.  
-
-For me, this has also been helpful in extracting data from rasters. When I wanted at the same points/locations the values of several raster layers combined in one dataframe, then I wanted the column names to match the raster layers I loop over. Then, only !!(variable_name) was sufficient to make it work.    
-```{r}
-#(I wanted to plot the same figures for several combinations of datasets and traits)
-
-#this doesn't work
-plot_expl_graphs <- function(dataset, trait){
-  #trait per CG, per treatment
-  print(dataset %>%
-    mutate(GARDENID = fct_relevel(GARDENID, "RAS", "GON", "ALN", "KEV")) %>%
-    ggplot(aes(x=GARDENID, y=trait)) +
-    geom_boxplot() +
-    theme_bw())}
-
-plot_expl_graphs(fruits, "WIDTHFRUIT") #Plots constant
-plot_expl_graphs(fruits, "NFERT")
-# plot_expl_graphs(fruits, WIDTHFRUIT) #error
-# plot_expl_graphs(fruits, NFERT)
-
-#this does work
-plot_expl_graphs <- function(dataset, trait){
-  #trait per CG, per treatment
-  print(dataset %>%
-    mutate(GARDENID = fct_relevel(GARDENID, "RAS", "GON", "ALN", "KEV")) %>%
-    ggplot(aes(x=GARDENID, y=!!sym(trait))) +
-    geom_boxplot() +
-    theme_bw())}
-plot_expl_graphs(fruits, "WIDTHFRUIT")
-plot_expl_graphs(fruits, "NFERT")
-
-
-#with a for loop
-for(trait in c("LENGTHFRUIT", "WIDTHFRUIT", "NFERT")){
-  print(fruits %>%
-    mutate(GARDENID = fct_relevel(GARDENID, "RAS", "GON", "ALN", "KEV")) %>%
-    ggplot(aes(x=GARDENID, y=!!sym(trait))) +
-    geom_boxplot() +
-    theme_bw())
-}
-```
-
-### Some shortcuts I find useful
-
-Pipe: Ctrl + Shift +m
-comment/uncomment: Ctrl + Shift +C
-Selecting several lines: Shift + Up/Down
-Move selected lines: Alt_left + Up/Down
