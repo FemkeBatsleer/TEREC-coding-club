@@ -8,10 +8,11 @@ In this repository, you will find notes from the coding club meetings at TEREC (
 
 * 11-03-2024: Intro and teasers into Bayesian
 * 22-04-2024: Bayesian analyses with brms
+* 17-06-2024: dplyr & tidyr, best practices and tips & tricks
 
 ## List of upcoming sessions
 
-* 17-06-2024 15:00 @ 11th: dplyr & tidyr, best practices and tips & tricks
+* 24-09-2024: LaTeX! (Morning session on location: @ Bonte/Wybouw retreat!)
 
 # How to use
 

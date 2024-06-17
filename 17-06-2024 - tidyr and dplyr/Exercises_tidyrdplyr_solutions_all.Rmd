@@ -1,0 +1,466 @@
+---
+title: "Coding club tidy & dplyr"
+author: "Femke Batsleer"
+date: "2024-06-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Coding club on tidyr and dplyr
+
+This coding club will dive into a part of the tidyverse: tidyr & dplyr. The first is a package to create **tidy data**, the second helps with **data manipulation**.  
+
+You can go through parts of the exercises on your own time: if you have a lot of experience, solving the exercise without the given step-by-step exercise. But don't forget that refreshing basics is often as valuable!  
+
+There are 3 main parts to this coding club: tidyr, dplyr & advanced tips & tricks.
+
+```{r loading packages}
+library(tidyverse)
+```
+
+## Create tidy data with tidyr
+
+The goal of tidyr is to help you create tidy data. Tidy data is data where:  
+
+* Each variable is a column; each column is a variable.
+* Each observation is a row; each row is an observation.
+* Each value is a cell; each cell is a single value.
+
+There are cheatsheets to help you find/remember the right functions!  
+https://rstudio.github.io/cheatsheets/html/tidyr.html
+
+### 1. How tidy or untidy is this dataset and how to solve it?
+
+This is a dataset of measurements of plants in 2 plots. Four things were measured: infloresence height, leaf length and width, root length. Which aspects are untidy?
+```{r plant measurements dataset}
+plants <- read.table("data/plant_size.txt", header=T)
+plants
+summary(plants)
+```
+
+### 2.  Making the dataset tidy
+
+```{r tidy plant measurements}
+plants_tidy <- plants %>%
+  #make the dataset more tidy with pivot_wider (observations at multiple rows --> spread them out to more columns)
+  pivot_wider(names_from="part", values_from="length") %>%
+  #separate the values for the leaf measurements into length and width
+  separate_wider_delim(col = leaf, delim="/", names=c("leaf_length", "leaf_width")) #you can also still use 'separate()'
+```
+
+### 3. Challenge: harder exercise
+
+A sample of a dataset from myself on wild strawberry (Fragaria vesca) with fruit measurements.  
+Fruit measurements were taken from strawberries, with a maximum of 5 per plant. What was measured for each fruit: length (mm), width (mm) and ratio of fertilized seeds (NFERT, number of 1-10).  
+In itself, the dataset is quite tidy (rows/observations are on the level of individual fruits). However, to be able it to combine it with other datasets of the project, and keep the raw data, I wanted this dataset in a wider format where the observations are on the level of individual plants. How would you do this?
+
+```{r}
+strawberries <- read.table("data/strawberry_fruits_tidyr.txt", header=T) 
+head(strawberries)
+
+strawberries_wide <- strawberries %>%
+  group_by(PLANTID) %>% mutate(numbering = as.character(row_number())) %>% #make column with sequential number for each observation for the same plant
+#split up the fruit data that are numeric and the ones that are characters/strings (function to pivot_longer doesn't work for different types)
+  pivot_longer(cols = c(LENGTHFRUIT, WIDTHFRUIT, NFERT), names_to='name') %>% #put them first in a longer format
+  unite("name", c("name", "numbering"), sep="_") %>% #add sequential numbering
+  pivot_wider(names_from = name, values_from = value)
+```
+
+Just as a **sidenote**, real datasets often exists of several of such small blocks of such challenges (but they can be split up in small blocks luckily!). For instance, this sample of data was part of a larger dataset with data from several years of the same plants, several sample moments within years, from several locations, etc. In the end, you just have to find a way to define these blocks and then work towards solutions and put those together. To efficiently do this, you need experience in both knowing what you can do with your packages and have an idea of types of data format (the ideas of data manipulation) and how to then solve the blocks of problems (the syntax of data manipulation). Both come with a lot of practice!
+
+
+
+## Data manipulation with dplyr
+
+There are cheatsheets to help you find/remember the right functions!  
+https://rstudio.github.io/cheatsheets/html/data-transformation.html
+
+
+### 1. Calculate new variables
+
+1. calculate the leaf area
+2. calculate the fraction of leaf length to inflorescence length
+3. calculate scaled variables with mean 0 and sd 1 for each variable (z-score)
+    + extra: try once to mutate the table as a whole, and then alternatively, to add it to the end of the table to keep the original data in the same dataframe
+
+```{r mutate variables}
+#you first have to change the type of data in the columns!
+plants_tidy <- plants_tidy %>%
+  mutate(across(3:6, as.numeric))
+
+plants_mp <- plants_tidy %>%
+  #then, mutations can be applied
+  #1. leaf area
+  mutate(leaf_area = pi*(leaf_length/2)*(leaf_width/2)) %>% #approximated by ellips
+  #2. fraction inflorescence length
+  mutate(leaf_inflor_ratio = leaf_length/inflorescence)
+
+#create function to scale (z-score)
+scaling_fn <- function(x){
+  (x-mean(x))/sd(x)
+}
+
+#mutate the whole table
+plants_mp_z <- plants_mp %>%
+  mutate(across(3:ncol(plants_mp), scaling_fn))
+#you can also directly give the function, but the syntax can be confusing
+# The . here refers to values in the column whereas ~ is a formula style syntax to represent the function
+plants_mp_z2 <- plants_mp %>%
+  mutate(across(3:ncol(plants_mp), ~(. -mean(.))/sd(.)))
+
+plants_mp_z2.2 <- plants_mp %>%
+  mutate(across(3:ncol(plants_mp), function(x) (x-mean(x))/sd(x)))
+
+#you can also use an existing function in r, but...
+#there are some problems sometimes with built-in functions, as here: scale returns a matrix, not a vector... So you need some extra add-ons (stackoverflow is your lifeline!)
+plants_mp_z3 <- plants_mp %>%
+  mutate(across(3:ncol(plants_mp), ~scale(.)[,1]))
+
+#add scaled variables to the existing data
+plants_mp_z_all <- plants_mp %>%
+  mutate(across(3:ncol(plants_mp), scaling_fn, .names = "{.col}_z"))
+```
+
+### 2. Select variables
+
+1. select only the leaf variables (including plant number and plot)
+2. change the positions of the length and width column in the original dataset
+
+```{r}
+#1. select only the leaf variables (including plant number and plot)
+plants_select <- plants_tidy %>%
+  select(Plant, Plant, leaf_length, leaf_width)
+#or
+plants_select.2 <- plants_tidy %>%
+  select(-inflorescence, -root)
+
+#2. change the positions of the length and width column in the original dataset
+plants_relocate <- plants_tidy %>%
+  relocate(leaf_width, .before=leaf_length)
+```
+
+### 3. Extract and arrange values
+
+1. Extract only the values of plot A
+2. Extract observations that have an infloresence length between 120 and 200
+3. Extract only the first 5 observations
+4. Sample 5 random rows
+5. order the dataset according to the infloresence length
+
+```{r Extract and manipulate variables}
+#1. Extract only the values of plot A
+plants_tidy %>% filter(Plot=="A")
+
+#2. Extract observations that have an infloresence length between 120 and 200
+plants_tidy %>% filter(inflorescence >=120 & inflorescence <=200)
+#or
+plants_tidy %>% filter(between(inflorescence, 120, 200))
+
+#3. Extract only the first 5 observations
+plants_tidy %>% slice(1:5)
+#or
+plants_tidy %>% slice_head(n=5)
+
+#4. Sample 5 random rows
+plants_tidy %>% slice_sample(n=5)
+
+#5. order the dataset according to the infloresence length
+plants_tidy %>% arrange(inflorescence)
+plants_tidy %>% arrange(desc(inflorescence))
+```
+
+
+### 4. Make summaries of your data
+
+1. calculate average length and sd of roots
+2. calculate average length and sd of all columns
+    + extra: change the name of columns into 'root.mean' instead of the standard 'root_mean'
+3. calculate average length and sd of roots per plot
+4. calculate average length and sd of all columns per plot
+5. calculate number of observations per plot
+
+```{r summarize}
+#1. calculate average length and sd of roots
+plants_tidy %>%
+  summarize(avg_root = mean(root), sd_root = sd(root))
+
+#2. calculate average length and sd of all columns
+plants_tidy %>%
+  summarize(across(where(is.numeric), list(avg=mean, sd=sd)))
+#or
+plants_tidy %>%
+  summarize(across(3:6, list(avg=mean, sd=sd)))
+# + extra
+plants_summary <- plants_tidy %>%
+  summarize(across(3:6, list(avg=mean, sd=sd), .names="{.col}.{.fn}"))
+
+#3. calculate average length and sd of roots per plot
+plants_tidy %>%
+  group_by(Plot) %>%
+  summarize(avg_root = mean(root), sd_root = sd(root))
+
+#4. calculate average length and sd of all columns per plot
+plants_tidy %>%
+  group_by(Plot) %>%
+  summarize(across(2:5, list(avg=mean, sd=sd)))
+
+#5. calculate number of observations per plot
+plants_tidy %>%
+  group_by(Plot) %>%
+  count()
+#or
+plants_tidy %>%
+  group_by(Plot) %>%
+  summarize(n = n()) #this is more flexible if you want to add extra things, such as calculate it together with the mean, sd, etc
+
+#extra info: to calculate unique values of a certain variable
+plants_tidy %>%
+  summarize(n_plots = n_distinct(Plot))
+``` 
+
+### 5. Challenge: pivot your summaries
+
+Challenge: to have a better overview of the summary, I would like a column with the names of the measurements (inflorescence, leaf_length, leaf_width, root) and an average and sd in separate columns. Or in other words: I want this summary itself to be tidy...  
+Tip: combine pivot_longer and pivot_wider
+
+```{r}
+plants_summary %>% pivot_longer(cols = everything(), 
+                                names_to="type_measurement",
+                                values_to = "value") %>%
+  separate_wider_delim(col=type_measurement, delim=".", names=c("type_measurement", "type_value")) %>%
+  pivot_wider(names_from=type_value, values_from=value)
+```
+
+
+### 6. Joining tables
+
+An extra dataset is collected with number of fruits per plant.
+
+1. Add the extra information to the plant dataset as a column
+    + extra: replace NA's with zeros
+2. Make a dataset with plants that did not have fruits
+3. Make a dataset with only plants that have both types of measurements
+4. extra: count how many data is overlapping (shared) between both datasets and how much data is unique to each dataset.
+
+
+```{r join tables}
+#extra dataset with number of fruits calculated per plant
+fruits <- read.table("data/plant_fruits.txt", header=T)
+head(fruits)
+
+#1. Add the extra information to the plant dataset as a column
+all_data <- plants_tidy %>% left_join(fruits, by=c("Plant"="plant_nr", "Plot"="Plot"))
+#+ replace NA's with zeros
+all_data %>% mutate(fruit_count = replace_na(fruit_count, 0))
+#or
+all_data %>% replace_na(list(fruit_count=0))
+
+#2. Make a dataset with plants that did not have fruits
+no_fruits <- plants_tidy %>% anti_join(fruits, by=c("Plant"="plant_nr", "Plot"="Plot"))
+
+#3. Make a dataset with only plants that have both types of measurements
+inner_data <- plants_tidy %>% inner_join(fruits, by=c("Plant"="plant_nr", "Plot"="Plot"))
+
+#If there would be extra plants in the fruit count data, without plants being present in the plant measurement data, a full_join would place all values in one dataset and fill out missing values from both datasets with NA's
+
+#4. extra: count how many data is overlapping between both datasets and how much data is unique to each dataset.
+#shared
+inner_data %>% count()
+#unique to plant data
+no_fruits %>% count()
+#unique to fruit data
+fruits %>% anti_join(plants_tidy, by=c("plant_nr"="Plant", "Plot"="Plot")) %>% count()
+```
+
+### 7. Challenge: harder exercise
+
+Again a sample of a dataset of the wild strawberries...
+This time I have two datasets: again one on fruit measurements and one on leaf damage estimations of each plant (the ratio of herbivory damage estimated (0-1) for individual leaves).  
+Both datasets consist of: PLANTID (unique number per plant), YEAR, GARDENID (3 letters), SEASON (measurement moment S1-S4). The leaf damage dataset has also the two following columns: PERCENTDAMAGE (estimated percent or ratio damage, 0-1) and LEAFNR (nr of the leaf that was measured for a plant). The fruit measurements have length, width and ratio of fertilized seeds (NFERT).  
+I want to:
+
+1. consider only the data from 2022
+2. calculate a proxy of volume for the fruits (approximated by the volume of an ellipse)
+3. calculate average and sd of the volume of the fruits and NFERT for each plant, across seasons
+4. calculate mean, CV (sd/mean) and max of leaf damage per plant (across seasons).
+5. join these two datasets so I have averaged traits of leaf damage and fruits per plant for 2022 (not every plant has fruits...)
+
+```{r}
+fruits <- read.table("data/fruits_dplyr.txt", header=T)
+leafdamage <- read.table("data/leafdamage_dplyr.txt", header=T)
+
+head(fruits)
+head(leafdamage)
+
+
+## Fruit ====
+#average across al fruits measured for a plant; fruits are considered cumulative
+fruit_meanvol <- fruits %>% filter(YEAR==2022) %>% 
+  mutate(VOLUME_FRUIT = (4/3)*pi*(LENGTHFRUIT/2)*(WIDTHFRUIT/2)*(WIDTHFRUIT/2)) %>%#calculate volume (also ellipsoid)
+  group_by(PLANTID) %>%
+  summarise(MEAN_VOL_FRUIT = mean(VOLUME_FRUIT, na.rm=TRUE),
+            MEAN_NFERT = mean(NFERT, na.rm=TRUE))# %>% filter(str_detect(PLANTID, "^ALN"))
+
+## Leaf damage ====
+#average of the mean of each season
+leafdamage_summary <- leafdamage %>% filter(YEAR==2022) %>%
+  #filter(SEASON=="S2") %>%
+  group_by(PLANTID, SEASON) %>%
+  summarise(MEAN_LD = mean(PERCENTDAMAGE),
+            CV_LD = sd(PERCENTDAMAGE)/mean(PERCENTDAMAGE),
+            MAX_LD = max(PERCENTDAMAGE)) %>%
+  ungroup() %>%  group_by(PLANTID) %>%
+  summarise(MEAN_LD = mean(MEAN_LD, na.rm=T),
+            CV_LD = mean(CV_LD, na.rm=T),
+            MAX_LD = max(MAX_LD))
+
+## Joining the datasets
+leafdamage_summary %>% left_join(fruit_meanvol, by="PLANTID")
+#or
+leafdamage_summary %>% full_join(fruit_meanvol, by="PLANTID")
+
+```
+
+
+## Tips & tricks
+
+To be dynamically added during the session...
+
+### Piping your dataset directly into ggplot2
+```{r}
+#no need to first define a dataset, then give it to ggplot, all in one flow:
+plants %>%
+  pivot_wider(names_from="part", values_from="length") %>%
+  separate_wider_delim(col = leaf, delim="/", names=c("leaf_length", "leaf_width")) %>%
+  ggplot(aes(x=leaf_length, y=leaf_width, col=Plot)) +
+  geom_point()
+```
+
+### assign variable on the other side of the pipe
+```{r}
+#first doing your pipeline, and only at the end assign it a variable with -> (instead of <- at the beginning)
+plants %>%
+  pivot_wider(names_from="part", values_from="length") %>%
+  separate_wider_delim(col = leaf, delim="/", names=c("leaf_length", "leaf_width")) -> plants_cleaned
+
+plants_cleaned <- plants %>%
+  pivot_wider(names_from="part", values_from="length") %>%
+  separate_wider_delim(col = leaf, delim="/", names=c("leaf_length", "leaf_width"))
+```
+
+### !!sym(variable_name) in loop/function
+If I want to loop over variable names and want to do a manipulation or plot a certain variable, it doesn't work to just give the name of the variable. You have to let R now it has to see it as a variable name (a column name). You have work arounds (looping over indices etc), but sometimes it's much easier to just work with the names themselves (to easily select/mutate/plot... your variable within your function or loop). 
+!!sym() makes a symbol of a given string and makes it operable for R.  
+
+For me, this has also been helpful in extracting data from rasters. When I wanted at the same points/locations the values of several raster layers combined in one dataframe, then I wanted the column names to match the raster layers I loop over. Then, only !!(variable_name) was sufficient to make it work.    
+```{r}
+#(I wanted to plot the same figures for several combinations of datasets and traits)
+
+#this doesn't work
+plot_expl_graphs <- function(dataset, trait){
+  #trait per CG, per treatment
+  print(dataset %>%
+    mutate(GARDENID = fct_relevel(GARDENID, "RAS", "GON", "ALN", "KEV")) %>%
+    ggplot(aes(x=GARDENID, y=trait)) +
+    geom_boxplot() +
+    theme_bw())}
+
+plot_expl_graphs(fruits, "WIDTHFRUIT") #Plots constant
+plot_expl_graphs(fruits, "NFERT")
+# plot_expl_graphs(fruits, WIDTHFRUIT) #error
+# plot_expl_graphs(fruits, NFERT)
+
+#this does work
+plot_expl_graphs <- function(dataset, trait){
+  #trait per CG, per treatment
+  print(dataset %>%
+    mutate(GARDENID = fct_relevel(GARDENID, "RAS", "GON", "ALN", "KEV")) %>%
+    ggplot(aes(x=GARDENID, y=!!sym(trait))) +
+    geom_boxplot() +
+    theme_bw())}
+plot_expl_graphs(fruits, "WIDTHFRUIT")
+plot_expl_graphs(fruits, "NFERT")
+
+
+#with a for loop
+for(trait in c("LENGTHFRUIT", "WIDTHFRUIT", "NFERT")){
+  print(fruits %>%
+    mutate(GARDENID = fct_relevel(GARDENID, "RAS", "GON", "ALN", "KEV")) %>%
+    ggplot(aes(x=GARDENID, y=!!sym(trait))) +
+    geom_boxplot() +
+    theme_bw())
+}
+```
+
+### Some shortcuts I find useful
+
+Pipe: Ctrl + Shift +m
+comment/uncomment: Ctrl + Shift +C
+Selecting several lines: Shift + Up/Down
+Move selected lines: Alt_left + Up/Down
+
+### Ground hog package
+
+Package ground hog: reproducible package loading. To be able to always run the code together with the package versions when the code was made.
+
+
+```{r}
+#example, but run this in a separate r session!
+#### Setup R environment ####
+
+# Install and set up groundhog for reproducible package loading
+if (!requireNamespace("groundhog", quietly = TRUE)) {
+  install.packages("groundhog")
+}
+library(groundhog)
+
+# Load required packages using groundhog
+packages <- c("move", "keyring", "data.table", "MESS", "bit64", "randomForest", 
+              "momentuHMM", "fasttime", "sf", "dplyr", "tidyr", "dbscan", "suncalc",
+              "ggplot2", "plotly", "leaflet", "lubridate", "stringr", "amt", "purrr", "patchwork" ,
+              "cowplot", "devtools", "lme4", "lmerTest", "glmmTMB", "performance", "DHARMa", "rmarkdown", "dplyr"
+)
+
+# Use sapply to load each package with the desired date
+sapply(packages, function(pkg) {
+  groundhog.library(pkg, date = "2023-08-30")
+})
+
+
+
+session_info <- devtools::session_info()
+print(session_info)
+installed_packages <- installed.packages()[, c("Package", "Version")]
+
+# Write to CSV file for reproducibility
+write.csv(installed_packages, file = "installed_packages_versions.csv", row.names = FALSE)
+
+```
+
+### case_when()
+
+
+A vectorised if-else function.
+function 'case_when': to be used with e.g. mutate, to define conditions before mutating something.
+
+```{r}
+#defining a new column according to the value of inflorescence
+#filter(inflorescence >=120 & inflorescence <=200)
+plants_tidy %>% 
+  mutate(inflorescence_cat = case_when(inflorescence <= 120 ~ 'small',
+                                       inflorescence >=200 ~ 'large',
+                                       TRUE ~ 'medium'
+                                     )
+         )
+```
+
+### General tips how to get started on your own datasets
+
+When you want to pivot/manipulate your dataset:
+
+* write down on paper first what you want (where you are vs where do you want to end) --> then chop it up in intermediate states with functions/formats you know --> then start coding it
+* Start with 10 lines of data = less overwhelming
+* Annotate your code! (other people, and most importantly, your future self, will be thankful!)
