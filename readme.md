@@ -14,6 +14,14 @@ In this repository, you will find notes from the coding club meetings at TEREC (
 
 * 24-09-2024: LaTeX! (Morning session on location: @ Bonte/Wybouw retreat!)
 
+## Topics that have a high chance to get scheduled soon
+* ggplot
+* INLA: Bayesian spatio-temporal models
+* Multivariate statistics
+* ... Please give input and/or volunteer to give a session! (contact Charlotte VD and/or Femke with topic and feasible timing)
+
+(* Shiny apps?)
+
 # How to use
 
 You can just download the whole files in your computer by clicking the clone/download button. If you are a Git user you are welcome to fork the repo and open pull request if you want to submit some changes. To avoid downloading the whole repo every time, if you have git installed on your computer you can open a terminal and just enter:
