@@ -18,9 +18,10 @@ In this repository, you will find notes from the coding club meetings at TEREC (
 * ggplot
 * INLA: Bayesian spatio-temporal models
 * Multivariate statistics
-* ... Please give input and/or volunteer to give a session! (contact Charlotte VD and/or Femke with topic and feasible timing)
 
-(* Shiny apps?)
+* ... Please **give input** and/or **volunteer** to give a session! (contact Charlotte VD and/or Femke with topic and feasible timing)
+
+* (Shiny apps?)
 
 # How to use
 
