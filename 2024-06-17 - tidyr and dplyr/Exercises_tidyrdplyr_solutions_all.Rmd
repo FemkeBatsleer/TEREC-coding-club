@@ -329,6 +329,75 @@ leafdamage_summary %>% full_join(fruit_meanvol, by="PLANTID")
 
 To be dynamically added during the session...
 
+
+
+### Ground hog package
+
+Thanks to Reinoud!  
+
+Package ground hog: reproducible package loading. To be able to always run the code together with the package versions when the code was made.
+
+```{r}
+#example, but run this in a separate r session!
+#### Setup R environment ####
+
+# Install and set up groundhog for reproducible package loading
+if (!requireNamespace("groundhog", quietly = TRUE)) {
+  install.packages("groundhog")
+}
+library(groundhog)
+
+# Load required packages using groundhog
+packages <- c("move", "keyring", "data.table", "MESS", "bit64", "randomForest", 
+              "momentuHMM", "fasttime", "sf", "dplyr", "tidyr", "dbscan", "suncalc",
+              "ggplot2", "plotly", "leaflet", "lubridate", "stringr", "amt", "purrr", "patchwork" ,
+              "cowplot", "devtools", "lme4", "lmerTest", "glmmTMB", "performance", "DHARMa", "rmarkdown", "dplyr"
+)
+
+# Use sapply to load each package with the desired date
+sapply(packages, function(pkg) {
+  groundhog.library(pkg, date = "2023-08-30")
+})
+
+
+
+session_info <- devtools::session_info()
+print(session_info)
+installed_packages <- installed.packages()[, c("Package", "Version")]
+
+# Write to CSV file for reproducibility
+write.csv(installed_packages, file = "installed_packages_versions.csv", row.names = FALSE)
+
+```
+
+### case_when()
+
+Thanks to Garben!
+
+A vectorised if-else function.
+function 'case_when': to be used with e.g. mutate, to define conditions before mutating something.
+
+```{r}
+#defining a new column according to the value of inflorescence
+#filter(inflorescence >=120 & inflorescence <=200)
+plants_tidy %>% 
+  mutate(inflorescence_cat = case_when(inflorescence <= 120 ~ 'small',
+                                       inflorescence >=200 ~ 'large',
+                                       TRUE ~ 'medium'
+                                     )
+         )
+```
+
+### General tips how to get started on your own datasets
+
+Thanks to Charlotte T!
+
+When you want to pivot/manipulate your dataset:
+
+* write down on paper first what you want (where you are vs where do you want to end) --> then chop it up in intermediate states with functions/formats you know --> then start coding it
+* Start with 10 lines of data = less overwhelming
+* Annotate your code! (other people, and most importantly, your future self, will be thankful!)
+
 ### Piping your dataset directly into ggplot2
 ```{r}
 #no need to first define a dataset, then give it to ggplot, all in one flow:
@@ -395,72 +464,9 @@ for(trait in c("LENGTHFRUIT", "WIDTHFRUIT", "NFERT")){
 }
 ```
 
-### Some shortcuts I find useful
+### Some shortcuts Femke finds useful
 
 Pipe: Ctrl + Shift +m
 comment/uncomment: Ctrl + Shift +C
 Selecting several lines: Shift + Up/Down
 Move selected lines: Alt_left + Up/Down
-
-### Ground hog package
-
-Package ground hog: reproducible package loading. To be able to always run the code together with the package versions when the code was made.
-
-
-```{r}
-#example, but run this in a separate r session!
-#### Setup R environment ####
-
-# Install and set up groundhog for reproducible package loading
-if (!requireNamespace("groundhog", quietly = TRUE)) {
-  install.packages("groundhog")
-}
-library(groundhog)
-
-# Load required packages using groundhog
-packages <- c("move", "keyring", "data.table", "MESS", "bit64", "randomForest", 
-              "momentuHMM", "fasttime", "sf", "dplyr", "tidyr", "dbscan", "suncalc",
-              "ggplot2", "plotly", "leaflet", "lubridate", "stringr", "amt", "purrr", "patchwork" ,
-              "cowplot", "devtools", "lme4", "lmerTest", "glmmTMB", "performance", "DHARMa", "rmarkdown", "dplyr"
-)
-
-# Use sapply to load each package with the desired date
-sapply(packages, function(pkg) {
-  groundhog.library(pkg, date = "2023-08-30")
-})
-
-
-
-session_info <- devtools::session_info()
-print(session_info)
-installed_packages <- installed.packages()[, c("Package", "Version")]
-
-# Write to CSV file for reproducibility
-write.csv(installed_packages, file = "installed_packages_versions.csv", row.names = FALSE)
-
-```
-
-### case_when()
-
-
-A vectorised if-else function.
-function 'case_when': to be used with e.g. mutate, to define conditions before mutating something.
-
-```{r}
-#defining a new column according to the value of inflorescence
-#filter(inflorescence >=120 & inflorescence <=200)
-plants_tidy %>% 
-  mutate(inflorescence_cat = case_when(inflorescence <= 120 ~ 'small',
-                                       inflorescence >=200 ~ 'large',
-                                       TRUE ~ 'medium'
-                                     )
-         )
-```
-
-### General tips how to get started on your own datasets
-
-When you want to pivot/manipulate your dataset:
-
-* write down on paper first what you want (where you are vs where do you want to end) --> then chop it up in intermediate states with functions/formats you know --> then start coding it
-* Start with 10 lines of data = less overwhelming
-* Annotate your code! (other people, and most importantly, your future self, will be thankful!)
