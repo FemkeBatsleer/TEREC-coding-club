@@ -1,0 +1,1065 @@
+%%%%%%%%%%%%%%%% PRESETTINGS %%%%%%%%%%%%%%%%%%%%%%%
+
+
+\documentclass[b5paper,10pt]{book} %
+\usepackage[margin=2.3cm,b5paper]{geometry} %lmargin=2.5cm,rmargin=4cm,tmargin=3cm,bmargin=3cm
+
+
+
+
+
+\usepackage[table]{xcolor}
+
+\usepackage{amsmath,amssymb,mathtools,graphicx,textcomp,booktabs,url,setspace,xcolor,soul,eurosym}
+\usepackage{multirow,listings,setspace,gnuplottex,latexsym,keyval,ifthen,moreverb,lscape,forest}
+\usepackage[pagewise]{lineno}
+\setpagewiselinenumbers
+\usepackage{wallpaper}
+\graphicspath{{fig/}}
+
+\usepackage[figuresright]{rotating}
+
+\usepackage[]{microtype} %activate={true,nocompatibility},final,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10
+\usepackage{booktabs}
+
+
+\usepackage{tikz,pgfplots}
+
+\usetikzlibrary{calc,shapes,arrows,intersections,shadows}
+\usepackage{textcomp}
+
+\newif\ifpienumberinlegend
+\pgfkeys{/number in legend/.code=
+    \expandafter\let\expandafter\ifpienumberinlegend
+    \csname if#1\endcsname
+    \ifpienumberinlegend
+    \let\legendbeforenumber\beforenumber
+    \let\legendafternumber\afternumber
+    \def\beforenumber##1\afternumber{}%
+    \fi,
+    /number in legend/.default=true
+}
+
+\usepackage{chemfig} 
+
+\usepackage[most]{tcolorbox}
+\usepackage{longtable}
+
+\usepackage[]{threeparttable}
+
+\usepackage[indention=0.5cm,labelsep=colon,font={sf,small},labelfont={bf,sf}]{caption}
+\usepackage[indention=0.5cm,font={sf,small},labelfont={bf,sf}]{subcaption}
+
+\definecolor{lightgray}{gray}{0.90} %not always visible on a dell screen!!!
+\definecolor{darkgray}{gray}{0.50}
+
+
+
+
+
+
+
+\usepackage{fancyhdr}  
+\pagestyle{fancy} 
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\fancypagestyle{frontmatter}{%    
+	\fancyhf{} 	
+	\fancyfoot[RO,LE]{\textsf{\thepage}} %Page 
+	\fancypagestyle{plain}{
+		\renewcommand{\headrulewidth}{0pt}
+		\fancyhead{}
+		\fancyfoot[RO,LE]{\textsf{\thepage}} %Page
+	} 
+}
+\fancypagestyle{mainmatter}{%    
+	\fancyhf{} 	
+	\fancyhead[RO,LE]{\nouppercase{\small \textsf{\leftmark}}}
+	\fancyfoot[RO,LE]{\textsf{\thepage}} %Page 
+}
+\setlength{\headheight}{15pt}
+
+\usepackage{pdfpages}
+
+\newcounter{letternum}
+\newcounter{lettersum}
+\setcounter{lettersum}{13}
+\newlength{\thumbtopmargin}
+\setlength{\thumbtopmargin}{1cm}
+\newlength{\thumbbottommargin}
+\setlength{\thumbbottommargin}{3cm}
+\newlength{\thumbheight}
+\pgfmathsetlength{\thumbheight}{%
+(\paperheight-\thumbtopmargin-\thumbbottommargin)/\value{lettersum}}
+
+\newlength{\thumbwidth}
+\setlength{\thumbwidth}{1.2cm}
+\setlength{\thumbheight}{1cm}
+
+
+\tikzset{
+   thumb/.style={
+%   draw=black,
+  fill=light-gray,
+   text=black,
+   minimum height=\thumbheight, %\thumbheight,
+   text width=\thumbwidth,
+	outer sep=0pt,%   outer sep=10pt,
+   font=\sffamily\Large,
+}
+}
+\newcommand{\oddthumb}[1]{%
+      \begin{tikzpicture}[remember picture, overlay]
+        \node [thumb,text centered,anchor=north east,] at ($%
+            (current page.north east)-%
+            (0,\thumbtopmargin+\value{letternum}*\thumbheight)%
+        $) {#1};
+   \end{tikzpicture}
+}
+\newcommand{\eventhumb}[1]{%
+      \begin{tikzpicture}[remember picture, overlay]
+        \node [thumb,text centered,anchor=north west,] at ($%
+            (current page.north west)-%
+            (0,\thumbtopmargin+\value{letternum}*\thumbheight)%
+        $) {#1};
+   \end{tikzpicture}
+}
+% create a new command to set a new lettergroup
+\newcommand{\lettergroup}[1]{%
+\fancyhead[LO]{\oddthumb{#1}}%
+\fancyhead[RE]{\eventhumb{#1}}%
+\fancypagestyle{chapterstart}{%
+    \renewcommand{\headrulewidth}{0pt}
+    \renewcommand{\footrulewidth}{0pt}
+    \fancyhf{}
+    \chead{\oddthumb{#1}}% chapters start only on odd pages
+    \fancyfoot[RO,LE]{\textsf{\thepage}} %\fancyfoot[RO,LE]{\textsf{Page \thepage}}
+  }
+    \thispagestyle{chapterstart}
+\stepcounter{letternum}%
+}
+
+%%%% CREATE BOX CHAPTER
+
+\usepackage[english]{babel}
+\usepackage[newparttoc,explicit, clearempty]{titlesec}%
+\usepackage[titles]{tocloft}
+\renewcommand{\cftpartpresnum}{BOOK\enspace}
+\renewcommand{\cftchapaftersnum}{.}
+\renewcommand\cftchapdotsep{\cftdotsep}
+
+\titleformat{\part}[display]{\bfseries\filcenter \def\partname{Book}}{\Huge\MakeUppercase{\partname}\enspace\thepart}{20pt}{\Huge #1}[\thispagestyle{empty}]%
+
+\titleformat{\chapter}[display]{\filcenter\bfseries}{\LARGE\MakeUppercase{\chaptername}~\thechapter}%
+{1\baselineskip}{\huge#1}%
+\titleformat{name=\chapter, numberless}[block]{\filcenter\bfseries}{}%
+{0pt}{\huge#1\ifstrequal{#1}{\contentsname}{}{\addcontentsline{toc}{chapter}{#1}}}%
+
+\usepackage[titletoc]{appendix} %
+\AtBeginEnvironment{appendices}{\def\chaptername\appendixname}
+\AtEndEnvironment{appendices}{\def\chaptername\oldchaptername}
+\newenvironment{newchapterbox}{%
+\def\chaptername{BOX}\def\appendixname{BOX}\appendices}%
+{\endappendices}
+
+\makeatletter\renewcommand\tableofcontents{%
+\chapter*{\contentsname}%
+\@starttoc{toc}%
+}
+\makeatother
+%%% END
+
+
+\usepackage[numbib,nottoc]{tocbibind}	%numbib
+
+
+%\usepackage[final]{pdfpages}
+
+\usepackage[]{natbib} %numbers,sort&compress
+
+\usepackage[Sonny]{fncychap} %Sonny
+
+\usepackage[colorlinks,linkcolor=black,urlcolor=black,citecolor=black]{hyperref} %load hyperref after fncychap
+\hypersetup{%
+    pdftitle = {Disentangling tree diversity, tree identity and edge effects: arthropod diversity and functioning},
+    pdfsubject = {PhD thesis},
+    pdfkeywords = {Forest fragmentation, Quercus robur, Quercus rubra, Fagus sylvatica, forest composition, herbivorous arthropods, biodiversity loss, predators, ecosystem functioning},
+    pdfauthor = {Irene M. van Schrojenstein Lantman},
+    pdfcreator = {\LaTeX\ with package \flqq hyperref\frqq},
+}
+\usepackage[]{cleveref} % load cleveref after hyperref
+
+\setlength{\parindent}{0cm} 
+\renewcommand{\contentsname}{Table of Contents}
+\renewcommand{\listfigurename}{List of Figures}
+\renewcommand{\listtablename}{List of Tables}
+\renewcommand{\appendixname}{}
+
+\makeatletter
+\newenvironment{chapquote}[2][2em]
+  {\setlength{\@tempdima}{#1}%
+   \def\chapquote@author{#2}%
+   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+   \itshape}
+  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother
+
+\makeatletter
+\def\mainmatter{%
+	\cleardoublepage
+	\@mainmattertrue
+	\pagenumbering{arabic}
+	\def\mainmatter{\cleardoublepage\@mainmattertrue}
+}
+\makeatother
+
+\definecolor{light-gray}{gray}{0.70} %not always visible on a dell screen!!!
+\definecolor{mygreen}{HTML}{23A48B}
+\definecolor{myyellow}{HTML}{F49F1F}
+\definecolor{myred}{HTML}{C24133}
+\definecolor{mygray}{gray}{0.90}
+
+
+
+%%%%%%%%%%%%%%%% BEGIN DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}	
+\clearpage
+	
+	\onehalfspace
+	
+	\frontmatter
+	\pagestyle{frontmatter}
+	\lstset{language=Perl}
+	%%%%%%%%%%%%%%%%  BEGIN TITLEPAGE  %%%%%%%%%%%%%%%%%%
+	\begin{titlepage}
+		
+		\begin{center}	
+			
+			\thispagestyle{empty}
+			
+			\vspace*{3.00cm}
+			
+			{\Huge \textbf{Disentangling tree diversity, tree identity and edge effects:}}\\
+			\vspace{1.0 cm}
+			{\Huge arthropod diversity and functioning}
+			
+			
+			\vspace{7.0 cm}
+			
+		\end{center}
+		
+
+		
+	\end{titlepage}
+
+\newpage
+		
+	\color{black}
+	\newpage 
+	\thispagestyle{empty}
+
+	\vspace*{\fill}
+
+	\begin{small}
+
+	\textcopyright 2019 I. M. van Schrojenstein Lantman
+
+	\vspace{0.5cm}	
+
+	van Schrojenstein Lantman, I. M. (2019). \textit{Disentangling tree diversity, tree identity and edge effects: arthropod diversity and functioning}. Ph.D. thesis, Ghent University, Ghent, Belgium.
+
+	\vspace{0.5cm}	
+\begin{tabbing}
+ Printed by: \= University Press, Wachtebeke, Belgium  \\
+Lay-out: \> I. M van Schrojenstein Lantman, inspired by Jorunn Dieleman \\
+Photos: \> I. M van Schrojenstein Lantman
+\end{tabbing}
+
+	\vspace*{0.5cm}
+	
+	The research presented in this study was financially supported by Concerted Research Actions -- Special Research Fund -- Ghent university as part of UGent GOA (Concentrated Research Actions) project “Scaling up Functional Biodiversity Research: from Individuals to Landscapes and Back (TREEWEB).
+	
+	\vspace{1cm}
+\end{small}	
+
+	
+	\newpage{\thispagestyle{empty}\cleardoublepage}
+	\color{black}
+	\newpage 
+	\thispagestyle{empty}
+\begin{center}
+			\thispagestyle{empty}
+			
+			\vspace*{3.00cm}
+			
+			{\Large Disentangling tree diversity, tree identity and edge effects:}
+
+			\vspace{0.5 cm}
+
+			{\Large arthropod diversity and functioning}
+			
+			\vspace{7.0 cm}
+			
+			{\normalsize Irene M. van Schrojenstein Lantman} 
+			
+			\vspace{1.0 cm}
+			
+			{\normalsize 2019}	
+			
+			\vspace{2.0 cm}
+			
+			{\footnotesize Ghent University, Faculty of Sciences, Department of Biology, Terrestrial Ecology Unit}
+			
+			\vspace{0.5cm}
+			
+			{\footnotesize Thesis submitted in fulfillment of the requirements for the degree of\\
+ 			Doctor (Ph.D.) in Science: Biology}
+
+\end{center}
+\newpage
+		
+	\color{black}
+	\newpage 
+	\thispagestyle{empty}
+
+		
+	{\small \textbf{Supervisor:} \\
+			\hspace{10mm}Prof. Dr. Dries Bonte}
+
+	\vspace*{1.0cm}
+	
+	{\small \textbf{Examination committee:}\\
+		\hspace{10mm} Prof. Dr. Dirk Verschuren (chairman) \\
+		\hspace{10mm}Prof. Dr. Lander Baeten (secretary) \\
+		\hspace{10mm}Prof. Dr. Matty P. Berg \\
+		\hspace{10mm} Dr. Pallieter De Smedt \\
+		\hspace{10mm} Dr. Fons van der Plas} \\
+
+
+\newpage
+	\begin{center}	
+		\thispagestyle{empty}		
+		\vspace*{8.00cm}	
+		
+		{\large
+		Beautiful things don't ask for attention}
+		
+		{\small \textit{The Secret Life of Walter Mitty}	}
+	\end{center}
+	
+	
+	
+	%%%%%%%%%%%%%%%%  BEGIN LISTS   %%%%%%%%%%%%%%%%%%%%%%%
+	\newpage{\thispagestyle{empty}\cleardoublepage}
+	\tableofcontents 
+
+	\clearpage
+	\thispagestyle{empty} % empty 
+	\CenterWallPaper{1}{CH1.jpg}
+
+
+	% TEMPORARY
+	%\linenumbers
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Chapter 1 - General introduction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\mainmatter
+	\newpage{\thispagestyle{empty}\cleardoublepage}
+	\setlength{\parindent}{2em}
+	\pagestyle{mainmatter}\chapter{General introduction} \label{chap:Introduction}
+	\ClearWallPaper
+	\chaptermark{Introduction}
+	\lettergroup{\thechapter}	
+
+\begin{flushright} \color{gray}Irene M. van Schrojenstein Lantman\color{black}\end{flushright}
+
+\newpage
+	
+	\section{The relevance of biodiversity}
+
+	Biodiversity is globally under threat (\citealt{Dirzo2003}; \citealt{Barnosky2011}), and the rate of biodiversity loss exceeds safe boundaries (\citealt{Rockstrom2009}). The current biodiversity loss is often human induced (\citealt{Ceballos2015}; \citealt{Young2016}). Causes of terrestrial biodiversity loss are the rate of climate change to which species cannot adapt or their inability to expand their range, invasive species arriving through the increased global transportation, or hunting of species for resources or even for pleasure (\citealt{Butchart2010}; \citealt{Young2016}). Yet, one of the most important forms of biodiversity loss is habitat decline (\citealt{Butchart2010}; \citealt{Young2016}). Agricultural intensification is for instance a one of the largest drivers in deforestation (\citealt{Foley2005}; \citealt{Young2016}). Deforestation is particularly concerning as forests are often biodiversity hot spots (\citealt{Myers2000}). 
+
+
+\newpage
+\thispagestyle{plain} % empty
+\mbox{}
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CHAPTER TREEWEB  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+	\clearpage
+	\thispagestyle{plain} % empty 
+	\CenterWallPaper{1}{CH2.jpg}
+	\newpage{\thispagestyle{empty}\cleardoublepage}
+	\ClearWallPaper
+	\pagestyle{mainmatter}
+	\chapter{TREEWEB study system}
+	\chaptermark{TREEWEB}
+	\lettergroup{\thechapter}
+
+	\begin{flushright} \color{gray}Irene M. van Schrojenstein Lantman
+
+	\vspace*{\fill}
+
+Partly modified from: De Groote, S.R.E., van Schrojenstein Lantman, I.M., Sercu, B.K., Dekeukeleire, D., Boonyarittichaikij, R., Smith, H.K., De Beelde, R., Ceunen, K., Vantieghem, P., Matheve, H., De Neve, L., Vanhellemont, M., Baeten, L., de la Peña, E., Bonte, D., Martel, A., Verheyen, K. \& Lens, L. (2017) Tree species identity outweighs the effects of tree species diversity and forest fragmentation on understorey diversity and composition. \textit{Plant Ecology and Evolution}, \textbf{150}, 229–239.\\
+DOI: 10.5091/plecevo.2017.1331
+\color{black}
+\end{flushright}
+
+\newpage
+
+	This entire thesis has been executed within the TREEWEB research project. All chapter cover the same study site. Some of the analyses performed are also based on the same idea and set up. Furthermore, in all chapters terms such as diversity effects, tree identity, tree species composition and forest composition are used and need some clarification. Within this chapter the study system is described and information on the plot characteristics is given, as are full details on the most used explanatory variables.
+
+	\section{Study system}
+	
+	The TREEWEB research platform (\url{www.treedivbelgium.ugent.be/pl\_treeweb.html}) has been established in 2014. The study sites are situated in northern Belgium (Figure \ref{FigB.1}). The 15 km $\times$ 30 km study window has a total forest cover of c. 3 000 ha (forest index 6.8\%), covering both larger forest patches ($>$ 80 ha) as well as many small forest patches ($<$ 1 ha). This area is characterized by an temperate climate with a mean annual temperature of  9.5 $^\circ$C and an annual precipitation of 726 mm (1980--2010, Royal Meteorological Institute of Belgium). After an initial survey of possible research locations, 53 suitable plots were selected. All plots consist of mature stand, have a similar land-use history (continuously forested since at least 1850) and are located on similar relatively dry, sandy loam to minimize possible confusion between tree diversity effects and soil or land-use legacy effects.
+
+	Three focal tree species were a priori selected to construct a diversity gradient: pedunculate oak (\textit{Quercus robur} L.), red oak (\textit{Q. rubra} L.) and common beech (\textit{Fagus sylvatica} L.). These species are regionally abundant and economically important. \textit{Quercus} \textit{robur} and \textit{F. sylvatica} are both native tree species and harbour important associated biodiversity (e.g. \citealt{Brandle2001}). \textit{Quercus} \textit{rubra} is non-native and locally invasive. However, this species can also be locally important for some taxonomic groups (e.g. \citealt{Dekeukeleire2014}). \textit{Quercus} \textit{rubra} is often present in managed forests. Around 1950 \textit{Q. rubra} was observed in natural habitats (\citealt{Branquart2007}), and it is the second most present non-native tree species in Flanders (northern Belgium) according to the forest inventory, red oak is part of real-world forests in Flanders. 
+
+	\begin{figure}[t!]
+		\begin{center}
+			\includegraphics[width=13cm]{MAP.png}
+		\end{center}
+			\caption{Map of the TREEWEB study area in northern Belgium with two detail panels including more clustered plots. Colour-shape combinations indicate the location of the plot and refer to the focal tree species composition. \label{FigB.1}}
+	\end{figure}
+
+	The three focal species occurred in monoculture stands as well as all possible mixtures. Each of the seven possible tree species combinations is included in the platform: three monocultures, three mixtures of two-species, and one three-species mixture. Thus a complete dilution design was avoided therefore the design allowed to distinguish tree diversity from tree identity effects (\citealt{Baeten2013}). By implementing all tree species combinations along a forest fragmentation gradient, interactions between local variables such as tree species identity and diversity and landscape features such as connectivity can also be studied.
+
+	\section{Plot establishment and characteristics}
+
+	The 30 m $\times$ 30 m plots were established in early 2014 and marked with wooden poles. Plots were small enough to avoid a complete dilution design, yet reached the minimum size for several measurements (e.g. herbivory, litter input) to be ecologically meaningful (\citealt{Baeten2013}). The location of a plot within a forest stand was chosen in a way that minimized the admixture of non-target tree species ($<$ 5\% of the basal area) and maximized the evenness of the target tree species in mixtures ($>$ 60\% of maximum evenness based on basal area) (\citealt{Baeten2013}). Tree species that are present in low numbers or as small individuals are thereby unlikely to contribute much to ecosystem processes, either directly or through interspecific interactions (\citealt{Mulder2004}). Besides, every target species needed to be represented by at least two trees per plot to make sure that measurements using individuals as the level of observation have replicates of species identity. To avoid effects of adjacent, different stands, we aimed for a buffer zone of minimum 10 m wide around the plots (selected zone 50 m $\times$ 50 m)\footnote{With one exception: plot 2, see Table \ref{TabMeth1}}. For the buffer zone, the evenness and admixture criteria were less strict, but the tree species composition and structure of the buffer zone needed to be comparable to the plots.
+
+	During February--March 2015, the position of each tree with a diameter at breast height (dbh) larger than 15 cm was mapped using the Field-Map system (Institute of Forest Eco-system Research (IFER) -- Monitoring and Mapping Solutions, Ltd., J\'{i}lov\'{e} u Prahy, Czech Republic; \url{www.field-map.com}). For all the trees of which the crown covered part of the plot, we measured the dbh, height, crown base height and crown projection. The study plots had a mean stem number of 17 (min 9 -- max 40) and a mean basal area of 39.04 m$^2$/ha (25.09--55.28 m$^2$/ha). Non-target species were present in 23 study plots. Only seven plots exceeded the 5\% admixture criterion and one plot had an admixture of 12\%. The most common admixed species were ash (\textit{Fraxinus excelsior} L.), sweet chestnut (\textit{Castanea sativa} Mill.) and sycamore (\textit{Acer pseudoplatanus} L.). The evenness based on basal area of the target tree species in mixtures was on average 96.8\% of maximum evenness (86.8--99.9\%). In a two-species mixture, evenness is at its maximum if the basal area of both species is the same. For two species with a basal area of 22.36 m$^2$/ha and 17.11 m$^2$/ha, for example, the evenness is 98.7\% of the maximum evenness.
+
+	Each plot was subdivided into four 15 m $\times$ 15 m squares. Five subplots of 5 m $\times$ 5 m were established, one in the centre of each square and one in the centre of the plot. Within each of these subplots, we identified all species in the tree (height \textgreater 7 m), shrub (1 m \textless height \textless 7 m) and herb layer (height \textless 1 m) and estimated the percentage cover of each species during August 2015. The herb layer species richness per plot was calculated as the number of different herb layer species found across the five subplots. Likewise, the herb layer species diversity was calculated as the exponent of the Shannon diversity index, using the mean cover values of each species over the five subplots per plot. Finally, total cover of the herb and shrub layer were estimated at plot level (Table \ref{TabMeth1}. The herb and shrub layer in these plots is relatively species-poor, with \textit{Rubus} sp., \textit{Pteridium aquilinum} and saplings of \textit{Q. rubra} as the most common understorey species. 
+
+	Besides the plant community, some information on the vertebrate community was also gathered. Large mammalian herbivores, such as roe deer, were rare in our forests and only present in low numbers (\textless 10) in the largest forest fragments in our study area. In the forest of Ooidonk (plot 52 \& 53; 53.4 ha) 3-5 roe deer were present. In the forest of Makkegem (plot 2-19; \textgreater160 ha) 5-10 roe deer were present. The bird community was assessed in spring 2018. Each plot was visited 3 times and a point-count method was used to assess the bird community. Briefly, during the dawn chorus, the first 4 hours after sunrise, the same expert walked to the center of the plots, waited for 10 minutes and then recorded the species and the number of calls and songs occurring within the plots. To maximize the chance of observing rare species that do not sing often, a 5s call was played back (March \& April: \textit{Dendrocoptes major}, \textit{D. medius}, \textit{Dryobates minor}, \textit{Dryocopus martius}, \textit{Picus viridis}; May: \textit{Muscicapa striata}, \textit{Ficedula hypoleuca}, \textit{Oriolus oriolus}, \textit{Phoenicurus phoenicurus}, \textit{Phylloscopus sibilatrix}). The most common insectivorous birds in the study plots are great tit (\textit{Parus major}), blue tit (\textit{Cyanistes caeruleus}), wren (\textit{Troglodytes troglodytes}), robin (\textit{Erithacus rubecula}), and nuthatch (\textit{Sitta europaea}). 
+
+	\section{Forest fragmentation}
+
+	Twelve fragmentation parameters were defined for each plot (Appendix S3 of (\citealt{Hertzog2019}). The two most used fragmentation parameters were fragment area and edge distance (Table \ref{TabMeth1}). Fragment area is defined as the area of the forest fragment in which the plot is situated and ranged between 1.3 ha and 90.4 ha. More specifically for this thesis, distance to the closest edge is defined as the shortest Euclidian distance from the centre of the plot to the closest forest edge and ranged between 7.0 m and 215.5 m. Both fragmentation measures were correlated (rpearson = 0.45, p $<$ 0.001). A generalized linear model with a negative-binomial distribution (log-link) with the variance increasing linearly with the mean was applied by using the GLMMTMB function (\citealt{Brooks2017}), within edge distance as response variable and fragment size as explanatory variable. Figure \ref{FigB.2} shows the relationship between edge distance and fragment size. Neither edge distance, nor fragment size was not related to tree diversity (rpearson = 0.02, p = 0.891; rpearson = -0.17, p = 0.231  respectively).
+
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=10cm]{B2.png}
+		\end{center}
+			\caption{Correlation between the Euclidean edge distance and fragment size. Data points are the data per plot, the line is the estimated relationship with the 95\% CI. \label{FigB.2}}
+	\end{figure}
+
+	\section{Tree diversity}
+
+	Within this thesis, \textbf{tree diversity effects} refer to effects caused by an increase in tree species richness, independent of the tree species identity involved. The relative abundance of tree species is taken into account. In each plot tree diversity was calculated based as the exponent of the Shannon diversity index (Table \ref{TabMeth1}), also known as the effective number of tree species. The index was based on the basal area of all tree species with a diameter \textgreater 15 cm. Due to the presence of non-focal species, the effective number of tree species could exceed 3. In Table \ref{TabMeth1} the relative abundance of the focal tree species is given, as is the presence of the most common non-focal tree species. In the statistical analysis of Chapters 4, 6 and 7, the models that included tree diversity in interaction with edge distance were linear models called M\textsubscript{div} (Table \ref{Tab3.1}.
+
+	\section{Forest composition}
+
+	The term \textbf{tree species composition}, or forest composition in short, is generally defined as the proportional contribution of the different focal tree species in the stand, and their possible interactions among the tree species. Within this thesis (Chapters 3, 4, 6 and 7) we tested the presence and type of composition effects based on \citet{Kirwan2009}. Three possible composition effects were considered: (i) no composition effects, (ii) additive, (iii) pair-wise interaction. Without composition effects, it is assumed that all tree species have similar, non-interactive effects on the studied response variable. With additive effects it is assumed that tree species involved have different effects , but in mixtures contribute proportionally to observed patterns in monocultures. There are pure additive effects of the tree species. With pair-wise interaction effects it is assumed that, independent of any possible different effect of tree species, interactions between pairs of species occur. Interactions between tree species may result in complementary or inhibitory effects, i.e. higher or lower values of the response variable are found than one would expect based on contribution to the response variable proportional to observed patterns in monocultures. 
+
+	For the statistical analysis, each composition effect had an assigned linear model: M\textsubscript{null}, M\textsubscript{add} and M\textsubscript{pair} respectively (Table \ref{Tab3.1}. M\textsubscript{null} only included an intercept. M\textsubscript{add} included the relative basal area (range: 0-1) of each of the focal tree species as explanatory variables. Besides the relative basal area of the focal tree species, M\textsubscript{pair} included pair-wise interactions between the relative basal area of the focal tree species. If any other explanatory variables were of interest, they could be included in all the models. In M\textsubscript{add} and M\textsubscript{pair}, the intercept was forced through zero. The models were statistically compared with each other to select the best fitting model representing which type of composition effects are present. An example of model outcomes taken from Chapter 4, Figure 4B and the corresponding explanation of composition effects are shown in Figure \ref{FigA.1}. Only in Chapter 5 were these composition models not used. There the main focus of the possible effect of the overstorey composition was related to the relative abundance of conspecifics in the overstorey, and the relative contribution of heterospecifics was ignored.
+
+	\section{Stand level vs. tree-species level}
+
+	In Chapters 3, 4 and 6 tree diversity, composition and edge effects are studied at a stand level, as well as on individual trees, analysed per tree species. In a non-analytical way, the resulting patterns of diversity, composition and edge effects at stand level can be compared to the patterns observed at tree-species level. This may provide some insight to which species is driving stand-level patterns in relation to the explanatory variables, or which tree species causes pair-wise interaction effects.. 
+
+	In line with this comparison, the term \textbf{tree species identity effects}, or identity effects in short, may have slightly different definitions. In essence, tree species identity effects are differences between tree species. In the case that trees differ from each other at a tree-species level, this will fulfil the first part of the assumption of additive composition effects: that the tree species involved have different effects. At a stand level, tree species identity effects can there also be considered composition effects.
+
+	In the case that pair-wise interaction effects are present at stand level, the tree-species specific patterns in compositional effects of the surrounding forest can provide insight in the underlying causes. As an example, a mixture of \textit{Q. robur} and \textit{F. sylvatica} may have a higher abundance than proportional contribution of the tree species based on monocultures would estimate. This pattern would only arise is at a species level at least one of the tree species has a higher abundance in this specific mixture. Tree-species specific responses to compositional changes in the surrounding forest stand can show which species might be more susceptible and therefore driving the stand level pattern. In case of species richness of higher trophic levels (i.e. Chapter 4), if no such pattern is found at tree-species level, but pair-wise interaction effects occur at stand level, the composition effects may in reality be additive. Reduced species richness of higher trophic levels in mixtures could then be explained by the overlap in species of higher trophic levels between tree species. 
+
+
+
+	\begin{figure}[bh!]
+			\begin{caption} \\ \textbf{(on next page)} Visual representation of model results and the underlying composition effects. \textbf{A} shows an example of the three different models as applied in Chapter 4, Figure 4.4B. The horizontal line represents the absence of composition effects. Black point ranges represent the estimated additive effects with a 95\% CI, and the blue point ranges represent pair-wise interaction effects with a 95\% CI. In \textbf{B} the (hypothetical) contribution of each tree species corresponding with the model estimate from \textbf{A} is shown, when composition effects are absent. There are no differences between tree species and their contribution in mixtures was proportional to their monocultures. In \textbf{C} the (hypothetical) contribution of each tree species corresponding with the model estimate from \textbf{A} is shown, when composition effects are additive. There are differences between tree species, but the contribution of tree species in mixtures is proportional to the values in their corresponding monocultures. In \textbf{D} the (hypothetical) contribution of each tree species corresponding with the model estimate from \textbf{A} is shown, when composition effects result in pairs of species interact with each other. Additional to the differences found between the tree species in monocultures (although not necessary for pair-wise interaction effects), the mixing of species resulted in complementary responses.  \label{FigA.1} \end{caption}
+\end{figure}
+\begin{figure}
+			\includegraphics[width=13cm]{FigureComposition.png}
+	\end{figure}
+	
+
+%% Table 2.2
+	\begin{sidewaystable}
+	  \begin{center}
+	 \begin{footnotesize}
+	    \caption{Detailed plot information. Edge distance is in metres. Fragment size is in hectares. Rel. is the relative basal area of the three tree species. Tree diversity in the exponent of Shannon index based on the basal area of all tree species. Total basal area is in m$^2$. Shrub and herb layer are the percentage of cover. (continued on next page)  \label{TabMeth1}}
+	\begin{tabular}{l l c r r r r r r r r r r r r}
+
+
+\toprule
+\rotatebox{270}{\textbf{Plot ID}} & \rotatebox{270}{\textbf{Fragment ID}} & \rotatebox{270}{\textbf{Species combination}} & \rotatebox{270}{\textbf{Species richness}} & \rotatebox{270}{\textbf{Edge distance}} & \rotatebox{270}{\textbf{Edge direction}} & \rotatebox{270}{\textbf{Fragment size}} & \rotatebox{270}{\textbf{Rel. \textit{F. sylvatica}}} & \rotatebox{270}{\textbf{Rel. \textit{Q. robur}}} & \rotatebox{270}{\textbf{Rel. \textit{Q. rubra}}} & \rotatebox{270}{\textbf{Tree diversity}} & \rotatebox{270}{\textbf{Total basal area}} & \rotatebox{270}{\textbf{Presence \textit{C. sativa}}} & \rotatebox{270}{\textbf{Shrub layer}} & \rotatebox{270}{\textbf{Herb layer}} \\
+\hline
+1 & 1 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 12.94 & SE & 25.36 &  & 0.29 & 0.71 & 2.27 & 3.85 & 1 & 34.2 & 41.6 \\
+2 & 2 & \textit{F. sylvatica} & 1 & 46.84 & N & 43.74 & 1.00 &  &  & 1.00 & 2.95 & 0 & 12.4 & 44.0 \\
+3 & 2 & \textit{F. sylvatica} & 1 & 54.91 & N & 43.74 & 1.00 &  &  & 1.00 & 3.60 & 1 & 2.0 & 75.0 \\
+4 & 3 & \textit{F. sylvatica} \& \textit{Q. rubra} & 2 & 130.63 & E & 29.83 & 0.57 &  & 0.43 & 1.98 & 3.55 & 0 & 10.0 & 11.4 \\
+5 & 3 & All & 3 & 90.06 & E & 29.83 & 0.34 & 0.27 & 0.39 & 2.96 & 3.60 & 0 & 16.2 & 49.0 \\
+6 & 4 & \textit{F. sylvatica} \& \textit{Q. rubra} & 2 & 87.10 & S & 90.36 & 0.36 &  & 0.64 & 1.92 & 4.07 & 1 & 11.4 & 12.2 \\
+7 & 4 & All & 3 & 125.64 & NE & 90.36 & 0.38 & 0.24 & 0.38 & 2.94 & 3.25 & 0 & 11.8 & 40.2 \\
+8 & 4 & \textit{F. sylvatica} \& \textit{Q. rubra} & 2 & 69.64 & NE & 90.36 & 0.55 &  & 0.45 & 1.99 & 3.37 & 0 & 31.6 & 40.0 \\
+9 & 4 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 118.89 & NE & 90.36 & 0.66 & 0.34 &  & 2.00 & 3.79 & 0 & 5.0 & 77.8 \\
+10 & 4 & \textit{F. sylvatica} & 1 & 79.50 & SE & 90.36 & 1.00 &  &  & 1.00 & 3.30 & 0 & 0.8 & 12.4 \\
+11 & 4 & All & 3 & 135.70 & E & 90.36 & 0.33 & 0.20 & 0.47 & 3.09 & 3.12 & 1 & 28.0 & 42.4 \\
+12 & 4 & \textit{F. sylvatica} \& \textit{Q. rubra} & 2 & 53.09 & N & 90.36 & 0.58 &  & 0.41 & 1.97 & 3.42 & 0 & 0.0 & 21.6 \\
+13 & 4 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 196.63 & NE & 90.36 & 0.64 & 0.36 &  & 2.01 & 3.36 & 0 & 10.2 & 40.6 \\
+14 & 4 & \textit{F. sylvatica} & 1 & 215.49 & N & 90.36 & 1.00 &  &  & 1.00 & 3.06 & 0 & 6.0 & 31.6 \\
+15 & 4 & \textit{F. sylvatica} \& \textit{Q. rubra} & 2 & 114.02 & NW & 90.36 & 0.36 &  & 0.64 & 1.92 & 4.18 & 0 & 5.0 & 15.4 \\
+16 & 4 & \textit{Q. rubra} & 1 & 199.97 & N & 90.36 &  &  & 1.00 & 1.00 & 4.16 & 0 & 32.6 & 49.0 \\
+17 & 4 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 33.63 & SE & 90.36 & 0.50 & 0.50 &  & 2.00 & 2.95 & 0 & 25.0 & 65.8 \\
+18 & 4 & \textit{Q. robur} & 1 & 43.14 & SW & 90.36 &  & 1.00 &  & 1.24 & 3.39 & 0 & 72.0 & 39.0 \\
+19 & 4 & \textit{Q. robur} & 1 & 101.39 & S & 90.36 &  & 1.00 &  & 1.03 & 3.75 & 0 & 50.0 & 35.0 \\
+20 & 5 & \textit{Q. robur} & 1 & 34.29 & NE & 3.03 &  & 1.00 &  & 1.11 & 4.56 & 1 & 68.0 & 69.0 \\
+21 & 6 & \textit{F. sylvatica} & 1 & 61.46 & SE & 6.19 & 1.00 &  &  & 1.00 & 4.72 & 1 & 20.0 & 16.0 \\
+22 & 7 & \textit{F. sylvatica} & 1 & 42.95 & NW & 44.14 & 1.00 &  &  & 1.15 & 3.92 & 1 & 30.0 & 30.4 \\
+23 & 7 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 120.43 & NW & 44.14 & 0.43 & 0.57 &  & 1.98 & 3.01 & 0 & 24.6 & 29.8 \\
+24 & 7 & All & 3 & 57.06 & S & 44.14 & 0.51 & 0.20 & 0.29 & 3.85 & 3.27 & 1 & 49.0 & 39.0 \\
+25 & 8 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 96.32 & NW & 19.30 &  & 0.60 & 0.40 & 2.77 & 3.35 & 0 & 74.0 & 51.0 \\
+26 & 9 & \textit{F. sylvatica} & 1 & 45.51 & NE & 3.53 & 1.00 &  &  & 1.00 & 4.15 & 0 & 0.4 & 18.2 \\
+\bottomrule
+\end{tabular}
+	\end{footnotesize}
+	  \end{center}
+	\end{sidewaystable}
+
+	\begin{sidewaystable}
+	  \begin{center}
+	 \begin{footnotesize}
+	\begin{tabular}{l l c r r r r r r r r r r r r}
+
+\toprule
+\rotatebox{270}{\textbf{Plot ID}} & \rotatebox{270}{\textbf{Fragment ID}} & \rotatebox{270}{\textbf{Species combination}} & \rotatebox{270}{\textbf{Species richness}} & \rotatebox{270}{\textbf{Edge distance}} & \rotatebox{270}{\textbf{Edge direction}} & \rotatebox{270}{\textbf{Fragment size}} & \rotatebox{270}{\textbf{Rel. \textit{F. sylvatica}}} & \rotatebox{270}{\textbf{Rel. \textit{Q. robur}}} & \rotatebox{270}{\textbf{Rel. \textit{Q. rubra}}} & \rotatebox{270}{\textbf{Tree diversity}} & \rotatebox{270}{\textbf{Total basal area}} & \rotatebox{270}{\textbf{Presence \textit{C. sativa}}} & \rotatebox{270}{\textbf{Shrub layer}} & \rotatebox{270}{\textbf{Herb layer}} \\
+\hline
+27 & 10 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 38.64 & NW & 1.31 & 0.63 & 0.37 &  & 1.94 & 3.98 & 1 & 23.8 & 82.0 \\
+28 & 11 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 45.19 & E & 10.74 & 0.43 & 0.57 &  & 1.98 & 3.56 & 0 & 74.0 & 43.0 \\
+29 & 11 & All & 3 & 25.90 & N & 10.74 & 0.32 & 0.41 & 0.27 & 3.72 & 3.37 & 0 & 23.2 & 10.4 \\
+30 & 12 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 52.71 & N & 9.69 & 0.47 & 0.53 &  & 2.37 & 3.66 & 0 & 22.4 & 61.0 \\
+31 & 13 & \textit{Q. robur} & 1 & 46.48 & NE & 9.21 &  & 1.00 &  & 1.03 & 3.46 & 0 & 16.6 & 97.8 \\
+32 & 14 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 54.98 & W & 35.49 &  & 0.46 & 0.54 & 2.24 & 3.24 & 0 & 2.0 & 47.8 \\
+33 & 14 & \textit{Q. rubra} & 1 & 23.34 & NW & 35.49 &  &  & 1.00 & 1.02 & 4.44 & 1 & 56.0 & 49.6 \\
+34 & 14 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 35.13 & E & 35.49 &  & 0.60 & 0.40 & 1.96 & 3.99 & 0 & 72.8 & 50.6 \\
+35 & 14 & \textit{Q. robur} & 1 & 88.96 & E & 35.49 &  & 1.00 &  & 1.10 & 2.85 & 1 & 40.0 & 74.4 \\
+36 & 15 & \textit{Q. rubra} & 1 & 28.40 & E & 58.35 &  &  & 1.00 & 1.00 & 3.40 & 0 & 47.0 & 50.0 \\
+37 & 15 & \textit{Q. rubra} & 1 & 106.25 & SW & 58.35 &  &  & 1.00 & 1.00 & 2.26 & 0 & 57.0 & 63.0 \\
+38 & 16 & All & 3 & 28.75 & NW & 46.64 & 0.24 & 0.26 & 0.49 & 2.84 & 3.69 & 0 & 14.0 & 31.0 \\
+39 & 16 & \textit{F. sylvatica} \& \textit{Q. rubra} & 2 & 171.65 & N & 46.64 & 0.40 &  & 0.60 & 1.96 & 3.60 & 1 & 17.0 & 27.8 \\
+40 & 16 & \textit{Q. rubra} & 1 & 98.36 & SW & 46.64 &  &  & 1.00 & 1.31 & 2.98 & 1 & 39.8 & 34.6 \\
+41 & 16 & \textit{Q. rubra} & 1 & 93.18 & E & 46.64 &  &  & 1.00 & 1.00 & 3.32 & 1 & 25.0 & 57.0 \\
+42 & 16 & \textit{F. sylvatica} & 1 & 59.14 & NW & 46.64 & 1.00 &  &  & 1.00 & 3.51 & 1 & 0.0 & 4.4 \\
+43 & 16 & \textit{Q. robur} & 1 & 25.93 & S & 46.64 &  & 1.00 &  & 1.00 & 2.60 & 0 & 36.6 & 86.4 \\
+44 & 16 & \textit{F. sylvatica} \& \textit{Q. robur} & 2 & 89.95 & S & 46.64 & 0.60 & 0.40 &  & 1.96 & 3.14 & 1 & 20.2 & 57.0 \\
+45 & 15 & \textit{Q. rubra} & 1 & 6.97 & E & 58.35 &  &  & 1.00 & 1.03 & 4.98 & 0 & 11.2 & 22.6 \\
+46 & 71 & All & 3 & 30.12 & N & 18.79 & 0.33 & 0.39 & 0.28 & 2.97 & 4.12 & 0 & 16.0 & 35.4 \\
+47 & 17 & \textit{Q. robur} & 1 & 55.24 & W & 18.79 &  & 1.00 &  & 1.00 & 2.38 & 1 & 81.0 & 30.6 \\
+48 & 17 & \textit{Q. robur} & 1 & 21.59 & NW & 18.79 &  & 1.00 &  & 1.00 & 3.62 & 0 & 79.0 & 21.4 \\
+49 & 18 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 69.80 & S & 25.50 &  & 0.46 & 0.54 & 2.16 & 3.83 & 0 & 36.0 & 82.0 \\
+50 & 18 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 45.69 & SE & 25.50 &  & 0.44 & 0.56 & 2.31 & 3.41 & 0 & 30.4 & 68.0 \\
+51 & 18 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 85.59 & NW & 25.50 &  & 0.40 & 0.60 & 2.25 & 3.87 & 1 & 36.4 & 81.0 \\
+52 & 19 & \textit{Q. rubra} & 1 & 181.23 & SE & 53.39 &  &  & 1.00 & 1.38 & 2.42 & 0 & 43.0 & 29.0 \\
+53 & 19 & \textit{Q. robur} \& \textit{Q. rubra} & 2 & 199.37 & NW & 53.39 &  & 0.62 & 0.38 & 2.19 & 2.87 & 1 & 28.6 & 38.0 \\
+\bottomrule
+\end{tabular}
+	\end{footnotesize}
+	  \end{center}
+	\end{sidewaystable}
+
+%% Table 3.1
+	\begin{sidewaystable}
+	  \begin{center}
+	 \begin{footnotesize}
+	    \caption{Explanatory variables included in the models testing for tree diversity and tree species composition effects. M\textsubscript{div} is the only diversity model, including the effective number of tree species as explanatory variable. The composition models are compared with each other to determine what composition effects are present. M\textsubscript{null} assumes no tree species effects. M\textsubscript{add} assumes additive tree species effects. M\textsubscript{pair} assumes pairwise interaction effects, beside additive effects of tree species.}
+	    \label{Tab3.1}
+	    \begin{tabular}{c l l l l}
+ 	     \toprule
+	  	& \textbf{Diversity model} & \multicolumn{3}{c}{\textbf{Composition models}} \\
+ 	     	& \textbf{M\textsubscript{div}}  & \textbf{M\textsubscript{null}} & \textbf{M\textsubscript{add}} & \textbf{ M\textsubscript{pair}}\\
+		& & & & \\
+		\multirow{11}{*}{\rotatebox{90}{\textbf{Explanatory variables}}} & Distance to edge & Distance to edge & Distance to edge & Distance to edge\\
+		\multirow{11}{*}{} & Effective species richness & & Relative basal area of \textit{F. sylvatica} & Relative basal area of \textit{F. sylvatica} \\
+		\multirow{11}{*}{} & Distance to edge & & \multirow{2}{*}{Relative basal area of \textit{Q. robur}} & \multirow{2}{*}{Relative basal area of \textit{Q. robur}} \\ 
+		\multirow{11}{*}{} & $\times$ effective species richness & & \multirow{2}{*}{} & \multirow{2}{*}{} \\ 
+		\multirow{11}{*}{} & & & Relative basal area of \textit{Q. rubra} & Relative basal area of \textit{Q. rubra}  \\
+		\multirow{11}{*}{} & & & & Rel. basal area of \textit{F. sylvatica} \\ 
+		\multirow{11}{*}{} & & & & $\times$ \& rel. basal area of \textit{Q. robur} \\
+		\multirow{11}{*}{} & & & & Rel. basal area of \textit{F. sylvatica} \\
+		\multirow{11}{*}{} & & & & $\times$ \& rel. basal area of \textit{Q. rubra} \\
+		\multirow{11}{*}{} & & & & Rel. basal area of \textit{Q. robur} \\
+		\multirow{11}{*}{} & & & & $\times$ \& rel. basal area of \textit{Q. rubra} \\
+	      \bottomrule
+	    \end{tabular}
+	\end{footnotesize}
+	  \end{center}
+	\end{sidewaystable}
+
+\newpage
+\thispagestyle{plain} % empty
+\mbox{}
+
+
+	
+\newpage
+
+
+
+
+
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BOX 1  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	\clearpage
+	\thispagestyle{plain} % empty 
+	\CenterWallPaper{1.1}{BOX3.jpg}
+	\newpage{\thispagestyle{empty}\cleardoublepage}
+	\ClearWallPaper
+\begin{newchapterbox}
+	\pagestyle{mainmatter}
+	\chapter{Linking leaf miners to herbivory}
+	\chaptermark{BOX}
+	\lettergroup{\thechapter}
+
+	\begin{flushright} \color{gray} Irene M. van Schrojenstein Lantman\\ \end{flushright}
+
+	\vspace{1.0cm}
+
+	\textbf{INTRODUCTION} --- Ecosystem functions are generally increased by biodiversity through the combined functional characteristics of individual species (\citealt{Hooper2005a}). While the main aim within this thesis is to understand the impact of tree diversity on higher trophic levels, with the data collected in Chapters 3 and 4 I was also able directly link the diversity of leaf miners to within-trophic level functioning. Yet, herbivores may among themselves generate competition (\citealt{Kaplan2007}). The relationship between diversity of one specific functional group of herbivores may not correlate with the overall herbivory, whilst they may relate to herbivory brought about by themselves. Here, I correlated the various diversity metrics with total herbivory, as well as herbivory caused specifically by leaf miners.
+
+	\textbf{MATERIALS \& METHODS} --- Leaf miner abundance, richness and diversity as described in Chapter 4 were sampled on the same leaves as the total leaf herbivory as described in Chapter 3, leaf miner herbivory was estimated per leaf. Leaf miner abundance, richness and diversity were calculated per tree. Leaf area eaten by leaf miners specifically (\%) was estimated per leaf, and averaged per tree, as described in Chapter 3 for the total leaf area eaten. Pearson correlation coefficients were calculated between all variables and visualized by using the combination of the \textsc{cor} and \textsc{corrplot.mixed} functions provided by the \textsc{corrplot} package (\citealt{Wei2017}) in R version 3.5.1. (\citealt{RCoreTeam2018}). 
+
+	\textbf{RESULTS} --- Herbivory caused by leaf miners is only a small proportion of the overall herbivory. The average leaf area loss on \textit{Q. robur} is 14.3\% with 2.0\% leaf eaten by leaf miners. On \textit{Q. rubra} 10.3\% leaf was eaten, with 0.01\% leaf eaten by leaf miners. For \textit{F. sylvatica} 2.08\% leaf was eaten of with 0.7\% leaf was eaten by leaf miners. The correlation between leaf miner diversity and total herbivory is practically absent (Figure \ref{BOXfig}). The correlation between leaf miner diversity and leaf miner herbivory is stronger, but inconsistent between tree species. It is negative on \textit{Q. robur} and positive for \textit{Q. rubra} and \textit{F. sylvatica}. Leaf miner abundance does strongly relate to leaf miner herbivory.
+
+%% Figure 4.1
+	\begin{figure}[t!]
+		\begin{center}
+			\includegraphics[width=11cm]{CorPlot.png}
+		\end{center}
+			\caption{Correlations between herbivory and leaf miner diversity metrics. Colours, numbers and shapes refer to Pearson’s correlation coefficient. LM stands for leaf miner. Our focal correlations are between Herbivory, leaf miner herbivory and leaf miner diversity. None of these show a strong correlation. \label{BOXfig}}
+	\end{figure}
+
+\newpage
+	\textbf{DISCUSSION} --- Comparison of the proportion of leaf damage caused by miners to other studies is not possible due to methodological differences. Other studies focus only on saplings, sample earlier in the season or only look into the abundance or survival of leaf miners (e.g. \citealt{Sobek2009}; \citealt{Castagneyrol2012}; \citealt{Setiawan2014}). With the generally low proportions of damage caused by leaf miners, it rather logical that leaf miner diversity does not correlate strongly with total leaf damage. It could even be possible that the leaf miners compete with other herbivores. Yet, there were no negative correlations between overall herbivory and leaf miner herbivory or abundance. Differences between leaf miner herbivory and total herbivory, since leaf miners and chewers respond differently to changes in the plant community (\citealt{Andow1991}; \citealt{Castagneyrol2013}). Different responses could also have contributed to the fact that the results from Chapters 3 and 4 do not line up. Chewers can move throughout the canopy, whilst leaf miners as larvae live mostly sedentary within the tree. While chewers are therefore more susceptible to direct changes in microclimate, leaf miners have other limitation. Large variation in smaller units within the trees force leaf miners to adopt a bet-hedging strategy during oviposition, creating large variation in larval survival rates (\citealt{Gripenberg2007a}). Early mortality of larvae will also reduce the leaf damage caused, although the mines can still be counted in terms of abundance. Leaf miners stand very low chances of survival due to parasitism (\citealt{Gripenberg2008}). When host abundance is low, parasitism also decreases (\citealt{Moreira2013}). The spatial context in which hosts and non-hosts attack plants determines the foraging efficiency of parasitoids (\citealt{Bukovinszky2012}). In our case this would be leaf miners vs. chewers. In line with this spatial context, parasitism is show to be higher along forest edges (\citealt{Murphy2016}). 
+
+	Although parasitism may explain much variation and some differences between chewers and leaf miners, a more extensive analysis is needed to understand the specific relationship between overall leaf damage and leaf miner diversity. Identity effects of the leaf miners and the community of chewers could provide some more insight in species-specific responses to changes in the environment or their contribution to leaf area loss. With the large proportion of leaf miner induced damage on \textit{F. sylvatica} the ecological relevance of the leaf miners may proof interesting to focus on too. Although there is some evidence that leaf miner diversity contributes to the overall herbivory, I conclude that the relationship between leaf miner diversity and herbivory is weak. 
+
+\newpage
+\end{newchapterbox}
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Chapter 4 - Top-down control %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+	\clearpage
+	\thispagestyle{plain} % empty 
+	\CenterWallPaper{1}{CH5.jpg}
+	\newpage{\thispagestyle{empty}\cleardoublepage}
+	\ClearWallPaper
+	\pagestyle{mainmatter}
+	\chapter{Avian top-down control affects invertebrate herbivory and sapling growth more strongly than overstorey species composition in temperate forest fragments} \label{chap:Avian top-down control}
+	\chaptermark{Avian top-down control}
+	\lettergroup{\thechapter}
+
+	\begin{flushright} \color{gray} Daan Dekeukeleire*\\
+	Irene M. van Schrojenstein Lantman*\\
+	Lionel R. Hertzog\\
+	Martijn L. Vandegehuchte\\
+	Diederik Strubbe\\
+	Pieter Vantieghem\\
+	An Martel\\
+	Kris Verheyen\\
+	Dries Bonte$^\circ$\\
+	Luc Lens$^\circ$\\
+	\medskip \begin{small}
+	* Shared first authorship\\
+	$^\circ$ Shared senior authorship\\ \end{small}
+
+	\vspace*{\fill}
+
+Adapted from: 2019 \textit{Forest Ecology and Management} \textbf{442}:1-9.\\
+DOI: 10.1016/j.foreco.2019.03.055 \color{black}
+
+
+\end{flushright}
+
+\newpage
+
+\begin{large}\textbf{Abstract}\end{large}\\
+
+\begin{small}
+	To better understand natural regeneration of trees and forest dynamics it is important to gain insight into the drivers of invertebrate herbivory. In mature forests, associational resistance of trees resulting from a high diversity of neighbouring trees is common, and can have cascading effects on tree growth through resource concentration effects or through changes in top-down control. While the underlying biological processes are known to be influenced by the forest’s spatial properties, we lack insights on how resource concentration, top-down control and fragmentation jointly affect sapling performance in fragmented landscapes. We therefore experimentally quantified effects of the proportion of conspecific trees in the overstorey (resource concentration), avian top-down control (natural enemies) and distance to the forest edge on invertebrate herbivory levels and sapling growth. The assessments were made on planted saplings of \textit{Fagus sylvatica}, \textit{Quercus robur} and \textit{Quercus rubra} in 53 experimental plots and birds were excluded by means of exclosures from a subset of these saplings. Excluding avian top-down control increased herbivory on each tree species. Increased herbivory led to decreased sapling growth in \textit{F. sylvatica} and \textit{Q. rubra}. On \textit{Q. robur} saplings, top-down control was stronger closer to the forest edge. Furthermore, in this species, herbivory inside the exclosures increased with an increasing proportion of conspecific trees in the overstorey, while such a resource concentration effect was not observed outside the exclosures. Our results show the importance for forest management of conserving insectivorous birds and promoting a mixed overstorey, which can decrease sapling herbivory when bird abundance is low. More generally, our study provides insight into the complex, multitrophic interactions that drive sapling growth in forest stands located within fragmented landscapes.\\
+
+	\vspace{1.0cm}
+Keywords: edge effects; trophic cascades; associational resistance; Enemies Hypothesis; \textit{Quercus robur}; \textit{Fagus sylvatica}; \textit{Quercus rubra}; Resource Concentration Hypothesis; tritrophic interactions; insectivorous birds\\
+\end{small}
+
+\newpage
+
+	\section{Introduction}
+
+	Invertebrate herbivores play a key role in forest food webs and the resulting nutrient cycling (\citealt{Duffy2002}) and herbivory affects the survival and growth of trees, in particular of saplings. As herbivorous invertebrates affect forest succession and dynamics (\citealt{Bagchi2014}), understanding the drivers of herbivory is important to better understand natural regeneration patterns and predict forest dynamics. Herbivory levels on a focal tree can be strongly influenced by the composition and diversity of the neighbouring tree community (\citealt{Barbosa2009}). While a higher diversity of neighbours may both increase herbivory levels through ‘associational susceptibility’ or decrease herbivory levels through ‘associational resistance’, meta-analyses and several reviews suggest that associational resistance is most common (\citealt{Andow1991}; \citealt{Balvanera2006}), especially in mature forests (\citealt{Jactel2007}; \citealt{Castagneyrol2014}).
+ 
+	Associational resistance is most often explained by two – mutually non-exclusive – hypotheses: the Resource Concentration Hypothesis and the Enemies Hypothesis (\citealt{Jactel2007}). According to the Resource Concentration Hypothesis (\citealt{Root1973}), specialist herbivores have a lower probability of finding their matching host species in more diverse plant communities, resulting in lower herbivore population densities and less herbivory damage (reviewed for temperate forests by \citealt{Jactel2005} and \citealt{Castagneyrol2014}). In support of this hypothesis, young Norway spruce (\textit{Picea abies} L.) had a lower probability of having galls under higher canopy cover of other tree species in mixed stands (\citealt{Muiruri2017}). Similarly, the pine processionary moth (\textit{Thaumetopoea pityocampa}) was less efficient in locating pine trees due to volatiles of neighbouring birch trees, which decreased the abundance of caterpillars and thus defoliation of pines growing in mixed forest stands (\citealt{Jactel2011}). According to the Enemies Hypothesis (\citealt{Root1973}; \citealt{Letourneau1987}; \citealt{Russell1989}), the number of predators and parasites is higher in more diverse plant communities due to a higher diversity of prey species and higher abundance of additional resources such as refuges or pollen. Stronger top-down control by predators and parasites then increases plant fitness by reducing herbivore abundance and herbivory. Although empirical support for the Enemies Hypothesis in forests is mixed (\citealt{Zhang2011a}; \citealt{Grossman2018}), predation pressure on herbivores has been widely associated with tree species diversity and forest composition (\citealt{Giffard2012}; \citealt{Muiruri2016}; \citealt{Yang2018}). A recent study in tropical forests recorded higher abundance, and higher functional and phylogenetic diversity, of birds in tree-species mixtures than predicted based on the corresponding single-species monocultures, which resulted in higher attack rates on artificial caterpillars in these mixtures (\citealt{Nell2018}). Due to intensive foraging, vertebrate predators, such as insectivorous birds, can reduce the abundance of herbivorous invertebrates and thus increase plant fitness or growth (\citealt{Schmitz2000}; \citealt{Mooney2010}; \citealt{Mantyla2011}). For example, white oak saplings (\textit{Quercus alba} L.) from which birds were excluded, suffered 12\% more herbivory than control saplings, and produced ca. 20\% less biomass in the subsequent growing season (\citealt{Marquis1994}). 
+
+	Despite the solid theoretical basis for associational resistance, effects thereof remain notoriously difficult to quantify in the field, and the relative importance of the different underlying mechanisms remains unclear (\citealt{Barbosa2009}; \citealt{Muiruri2016}; \citealt{Grossman2018}). While associational resistance is essentially a local process, it nevertheless depends on the spatial context, which is surprisingly seldom considered as an important driver (\citealt{Nadrowski2010}). Globally, more than 20\% of forest area is currently located within 100 m of a forest edge, which has far-reaching effects on species distributions and ecosystem functioning (\citealt{Haddad2015}; \citealt{Pfeifer2017}). Impacts of forest edges on herbivory are highly variable, and still not well understood. Both higher (e.g. \citealt{Terborgh2006}; \citealt{Castagneyrol2019}) and lower (e.g. \citealt{Simonetti2007}; \citealt{Ruiz-Guerra2010}) levels of herbivory have been reported closer to the forest edge and in smaller fragments. Lower rates of herbivory near forest edges may result from higher top-down control by insectivorous bird species, the diversity and activity of which has been shown to be higher near temperate forest edges (\citealt{Terraube2016}; \citealt{Hofmeister2017}; \citealt{Melin2018}). In support of this, experimental studies with artificial caterpillars revealed higher predation levels at edges than in the forest interior (\citealt{Barbaro2014}; \citealt{Gonzalez-Gomez2017}, but see \citealt{Peter2015}). In synergy with patterns of overstorey species composition, shifts in abundance of natural enemies in relation to the distance from forest edges may hence shape associational effects on herbivory in fragmented landscapes. 
+
+	In this study, we experimentally assessed the relative effects of overstorey species composition and avian top-down control on invertebrate herbivory of tree saplings in deciduous forest fragments, and how these changes in herbivory levels in turn affect sapling growth. We therefore planted saplings of three focal tree species (\textit{Fagus sylvatica} L., \textit{Quercus robur} L. and \textit{Q. rubra} L.) in plots along independent gradients of forest fragmentation and tree species composition. We experimentally excluded insectivorous birds from a subset of these saplings, and monitored herbivory levels in both the presence and absence of birds. We predicted (i) higher herbivory levels on saplings inside exclosures than on those outside exclosures; (ii) stronger effects of the exclusion of avian predators closer to forest edges; (iii) higher herbivory levels on saplings under an overstorey with a larger proportion of conspecific trees and (iv) reduced sapling growth under higher herbivory levels.
+
+	\section{Materials and Methods}
+	\subsection{Study area}
+	
+	The study area is described in Chapter 2.
+
+	\subsection{Field experiment}
+
+%% Figure 4.1
+	\begin{figure}[t!]
+		\begin{center}
+			\includegraphics[width=13cm]{4F1.png}
+		\end{center}
+			\caption{A) Example of a detailed map of a three-species plot (30 m $\times$\ 30 m), with the crown projection area for the overstorey trees (coloured according to the species), location of the sapling clusters (black triangles) and exclosure (grey rectangle). B) Exclosure with a cluster of six saplings. \label{Fig4.1}}
+	\end{figure}
+
+	In autumn 2014, we planted 18 saplings (3-year-old, 40 -- 120 cm tall) in each plot (n = 53) in three clusters in each plot(Figure \ref{Fig4.1}A). Each cluster consisted of six saplings planted in pairs: two \textit{F. sylvatica} saplings, two \textit{Q. rubra} saplings and two \textit{Q. robur} saplings. The diameter of each cluster was about 1.5 m. Before bud burst in early April 2016 we covered one cluster of saplings per plot with a commercial bird exclusion net (dark green polypropylene nets, mesh size 10 $\times$\ 10 mm) to exclude avian predators but allow invertebrates to enter. We attached the nets to a 2.5 m long pole in the centre of the sapling cluster and secured the edge of the net to the ground to prevent birds from entering from below (Figure \ref{Fig4.1}B). Exclosures were installed in 52 of the 53 plots (no permission granted in one plot). Note that our exclosures only excluded vertebrates; invertebrate predators were not excluded and may even have benefited from the exclusion of vertebrate insectivores (e.g. \citealt{Grass2017}; \citealt{Bosc2018}).
+
+	We scored herbivory levels and measured the growth of 466 saplings (Appendix 5.1). After the main herbivory peak, between June 28th and June 30th, 2016, we randomly sampled ten leaves per sapling to estimate herbivory levels. A sample of ten leaves corresponded to ca. 8\% of the leaves of a \textit{F. sylvatica} sapling, ca. 24\% for \textit{Q. rubra} and ca. 30\% for \textit{Q. robur}. Two authors (DD, IvSL) independently estimated the leaf area loss (percentage of leaf consumed by chewers and leaf miners) per leaf in the field visually in categories nearest to 0\%, 1\%, 2\%, 5\% and every consecutive 5\%. At the end of the growing season (September 2015 and 2016), we measured the height of all saplings to the nearest cm. 
+
+	\subsection{Statistical analysis}
+
+	To investigate (in)direct relationships between the overstorey tree species composition, distance to the forest edge, top-down control by insectivorous birds, and sapling growth, we used structural equation models (SEM). For each sapling species, we built a separate SEM (Figure \ref{Fig4.2}) as a piecewise combination of (generalized) linear mixed effect models using piecewiseSEM (\citealt{Lefcheck2016}). This approach allowed for the incorporation of random effects and flexible distributions of the response variable. As independent (exogenous) variables we included in each model: (i) the relative basal area (proportion) of the conspecific tree species in the overstorey of a plot (range 0 -- 1), (ii) the Euclidian distance of the plot centre to the forest edge (range 6.97 m -- 215.49 m) and (iii) the absence or presence of an exclosure (0 or 1). As dependent (endogenous) variables we considered ‘herbivory level’, calculated as the mean leaf area loss of the ten sampled leaves per sapling and ‘sapling growth’, calculated as the difference in height between September 2016 and September 2015 divided by the initial sapling height in September 2015. The first model in each SEM modelled herbivory level (response variable) as a function of the relative basal area of the conspecific tree species, the edge distance (scaled around their mean; \citealt{Schielzeth2010}), the exclosure treatment and the interaction between exclosure treatment and edge distance and between exclosure treatment and conspecific basal area as explanatory variables. These models had a negative binomial response variable distribution (log-link) with the variance increasing quadratically with the mean, as this distribution gave a better fit and convergence than a Poisson distribution. The second model in each SEM modelled sapling growth (response variable) as a function of the scaled edge distance, conspecific basal area (relative to total basal area) and herbivory level as explanatory variables and these models had a normal response variable distribution. All statistical inferences reported are those for the full models.
+
+	All models were run using the glmmTMB package v. 0.2.3 (\citealt{Brooks2017}). In each model, sapling cluster ID, nested within plot ID, nested within forest fragment ID was included as a random term to account for the possible dependence of the herbivory levels on saplings planted within the same cluster located within the same plot located within the same forest fragment. Marginal R² (i.e. proportion of the variation explained by the fixed effects) were derived using the function r2 from the package sjPlot v. 2.6.1 (\citealt{Ludecke2018}). In some models the random effect variance was estimated at 0 and to derive the R² values we had to drop these random terms. SEM fits were evaluated using Shipley’s test of directed separation (Fisher’s C statistic) calculated through the significance of all missing paths. Values of p \textgreater 0.05 indicated that the model included all important relations between the observed variables (\citealt{Shipley2009}). SEMs were fitted using the package piecewiseSEM v. 2.0.2 (\citealt{Lefcheck2016}). Effect sizes were standardized by multiplying the raw coefficients with the standard deviation of the independent variable divided by the standard deviation of the dependent variable. All analyses were performed in R v. 3.5.1 (\citealt{RCoreTeam2018}). 
+
+%% Figure 4.2
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=10cm]{4F2.png}
+		\end{center}
+			\caption{Structural equation model (SEM) path diagrams for A) \textit{Fagus sylvatica}, B) \textit{Quercus robur} and C) \textit{Quercus} \textit{rubra}. Arrows show direction, dashed arrows show interactions, and numbers near arrows (standardized effect sizes) show relative magnitude of the relationship for significant variables. Grey arrows show non-significant relationships specified in the a priori model. Coefficients of determination (marginal R$^{2}$) are shown for all response variables. \label{Fig4.2}}
+	\end{figure}
+
+	\section{Results}
+
+	Herbivory levels were, on average, higher for \textit{Q. robur} (est. 15.8\%; 95\% CI: 12.5 -- 19.0) and \textit{Q. rubra} (est. 18.6\%; 95\% CI: 20.3 -- 16.9) than for \textit{F. sylvatica} (est. 10.4\%; 95\% CI: 9.1 -- 11.7; Appendix 5.2). The three structural equation models (Figure \ref{Fig4.2}) showed a good fit, indicating that no significant paths were missing (SEM \textit{F. sylvatica}: Fishers’s C = 10.31, df = 6, p = 0.11; SEM \textit{Q. robur}: Fishers’s C = 9.93, df = 6, p = 0.13; SEM \textit{Q. rubra}: Fisher’s C = 7.79, df = 6, p = 0.24). 
+
+	For \textit{F. sylvatica} saplings, excluding birds led to 4.8\% more leaf area loss (Figure \ref{Fig4.3}, Table \ref{Tab4.1}, est. herbivory level exclosure: 17.5 \%, 95\% CI: 6.1 -- 28.9 vs. control: 12.7\%, 95\% CI: 4.4 -- 21.0), which in turn led to a decrease of 0.005 in growth (height increase relative to height the year before) (Figure \ref{Fig4.4}A, Table \ref{Tab4.1}, est. growth exclosure: -0.002, 95\% CI: -0.030 -- 0.025 vs. control: 0.003, 95\% CI: -0.025 -- 0.031). Edge distance and the proportion of \textit{F. sylvatica} in the overstorey were not associated with herbivory level or growth for \textit{F. sylvatica} (Figure \ref{Fig4.2}, Figure \ref{Fig4.4}B, Figure \ref{Fig4.5}, Table \ref{Tab4.1}). 
+
+%% Figure 4.3
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=8cm]{4F3.png}
+		\end{center}
+			\caption{Raw data for the herbivory level (average \% leaf area loss for ten leaves per sapling) for \textit{Fagus sylvatica}, \textit{Quercus robur} and \textit{Q. rubra} from which birds were excluded (exclosure treatment) and for control saplings. Herbivory levels significantly increased inside the exclosures for all saplings species. \label{Fig4.3}}
+	\end{figure}
+
+%% Table 4.1
+	\begin{sidewaystable}
+	  \begin{center}
+	 \begin{footnotesize}
+	    \caption{Summary of test statistics for models included in the SEM, ordered per sapling species. All estimates (est.), standard errors (SE) and p-values refer to the fixed effects in models with either herbivory level or sapling growth as response variable.}
+	    \label{Tab4.1}
+	    \begin{tabular}{c c l c c c c c c c c c}
+	      \toprule
+		& & & \multicolumn{3}{c}{\textbf{\textit{F. sylvatica}}} & \multicolumn{3}{c}{\textbf{\textit{Q. robur}}} & \multicolumn{3}{c}{\textbf{\textit{Q. rubra}}}\\
+		& & & \textbf{est.} & \textbf{SE} & \textbf{p-value} & \textbf{est.} & \textbf{SE} & \textbf{p-value} & \textbf{est.} & \textbf{SE} & \textbf{p-value}\\
+		\multirow{6}{*}{\rotatebox{90}{\textbf{Herbivory}}} & \multirow{6}{*}{\rotatebox{90}{\textbf{level}}} & Intercept & 2.001 & 0.141 & \textless0.001 *** & 2.294 & 0.169 & \textless0.001 *** & 2.829 & 0.126 & \textless0.001 *** \\
+		\multirow{6}{*}{} & \multirow{6}{*}{} & Exclosure & 0.465 & 0.143 & \color{white}\textless\color{black}0.001 **\color{white}*\color{black} & 0.399 & 0.167 & \color{white}\textless\color{black}0.016 *\color{white}**\color{black} & 0.108 & 2.263 & \color{white}\textless\color{black}0.023 *\color{white}**\color{black}\\
+		\multirow{6}{*}{} & \multirow{6}{*}{} & Edge distance & 0.085 & 0.105 & \color{white}\textless\color{black}0.418 \color{white}***\color{black} & 0.332 & 0.118 & \color{white}\textless\color{black}0.005 **\color{white}*\color{black} & 0.027 & 0.076 & \color{white}\textless\color{black}0.726 \color{white}***\color{black} \\
+		\multirow{6}{*}{} & \multirow{6}{*}{} & Relative basal area & 0.418 & 0.297 & \color{white}\textless\color{black}0.160 \color{white}***\color{black} & -0.346 & 0.361 & \color{white}\textless\color{black}0.338 \color{white}***\color{black} & -0.081 & 0.213 & \color{white}\textless\color{black}0.702 \color{white}***\color{black} \\
+		\multirow{6}{*}{} & \multirow{6}{*}{} & Edge distance:exclosure & 0.025 & 0.123 & \color{white}\textless\color{black}0.838 \color{white}***\color{black} & -0.371 & 0.132 & \color{white}\textless\color{black}0.005 **\color{white}*\color{black} & -0.015 & 0.078 & \color{white}\textless\color{black}0.853\color{white}***\color{black}\\
+		\multirow{6}{*}{} & \multirow{6}{*}{} & Rel. basal area:exclosure & -0.267 & 0.312 & \color{white}\textless\color{black}0.392 \color{white}***\color{black} & 1.497 & 0.132 & \textless0.001 *** & -0.010 & 0.221 & \color{white}\textless\color{black}0.966 \color{white}***\color{black} \\
+		\multirow{5}{*}{\rotatebox{90}{\textbf{Sapling}}} & \multirow{5}{*}{\rotatebox{90}{\textbf{growth}}} & & & & & & & & & & \\
+		\multirow{5}{*}{} & \multirow{5}{*}{} & Intercept & 0.018 & 0.007 & \textless0.001 *** & 0.013 & 0.014 & \textless0.001 *** & 0.058 & 0.013 & \textless0.001 ***\\
+		\multirow{5}{*}{} & \multirow{5}{*}{} & Herbivory level & -0.001 & \textless0.001 & \color{white}\textless\color{black}0.031 *\color{white}**\color{black} & 0.000 & \textless0.001 & \color{white}\textless\color{black}0.360 \color{white}***\color{black} & -0.002 & \textless0.001 & \color{white}\textless\color{black}0.001 **\color{white}*\color{black} \\
+		\multirow{5}{*}{} & \multirow{5}{*}{} & Edge distance & -0.003 & 0.005 & \color{white}\textless\color{black}0.545 \color{white}***\color{black} & 0.013 & 0.009 & \color{white}\textless\color{black}0.122 \color{white}***\color{black} & -0.007 & 0.007 & \color{white}\textless\color{black}0.329 \color{white}***\color{black} \\
+		\multirow{5}{*}{} & \multirow{5}{*}{} & Relative basal area & -0.004 & 0.016 & \color{white}\textless\color{black}0.805 \color{white}***\color{black} & -0.007 & 0.027 & \color{white}\textless\color{black}0.787 \color{white}***\color{black} & 0.041 & 0.019 & \color{white}\textless\color{black}0.038 \color{white}**\color{black} \\
+	      \bottomrule
+	    \end{tabular}
+	\end{footnotesize}
+	  \end{center}
+	\end{sidewaystable}
+
+
+
+%% Figure 4.4
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=13cm]{4F4.png}
+		\end{center}
+			\caption{Relationship between growth (increase in height relative to initial height) and A) herbivory levels (\% leaf area loss) and B) relative concentration of conspecific trees in the overstorey for saplings of \textit{Fagus sylvatica}, \textit{Quercus robur} and \textit{Quercus rubra}. Points show raw data per sapling and the lines show model prediction with 95\% confidence intervals (grey) assuming the average values of other explanatory variables. Note that some saplings decreased in height due to damage. A) Sapling growth significantly decreased with increasing herbivory levels for \textit{F. sylvatica} and \textit{Q. rubra} (full lines), while this relationship was not significant for \textit{Q. robur} (dashed line). B) Sapling growth significantly increased with increasing concentration of \textit{Q. rubra} in the overstorey (full line), while this relationship was not significant for the other species (dashed lines). \label{Fig4.4}}
+	\end{figure}
+
+
+
+%% Figure 4.5
+	\begin{figure}
+		\begin{center}
+			\includegraphics[width=13cm]{4F5.png}
+		\end{center}
+			\caption{Relationship between herbivory levels (\% leaf area loss) and A) distance to the forest edge and B) relative basal area of conspecific trees for saplings of \textit{Fagus sylvatica}, \textit{Quercus robur} and \textit{Q. rubra}. Data points show raw data per sapling and the lines show model prediction with 95\% confidence intervals (grey), assuming the average value for other explanatory variables. For \textit{Q. robur} saplings herbivory levels significantly increased with A) edge distance outside the exclosure (full line) and B) with relative concentration of \textit{Q. robur} in the overstorey inside the exclosure (full line). Other relationships were not significant (dashed line).  \label{Fig4.5}}
+	\end{figure}
+
+
+Herbivory levels on \textit{Q. robur} increased by 18.4\% when birds were excluded (Figure \ref{Fig4.3}, Table \ref{Tab4.1}, est. herbivory level exclosure: 26.9\%, 95\% CI: 12.2 -- 41.6 vs. control: 8.5\% 95\% CI: 3.5 -- 13.6) and were higher further from the forest edge (Figure \ref{Fig4.2}, Table \ref{Tab4.1}). Moreover, the exclosure treatment significantly interacted with both the distance from the forest edge and the proportion of \textit{Q. robur} in the overstorey (Table \ref{Tab4.1}). Excluding birds largely cancelled out the increase in herbivory levels with distance from the forest edge (Figure \ref{Fig4.5}A, Table \ref{Tab4.1}). Excluding birds also led to higher herbivory levels when the proportion of \textit{Q. robur} in the overstorey increased (Figure \ref{Fig4.5}B, Table \ref{Tab4.1}). The level of herbivory did not significantly affect the growth of \textit{Q. robur} saplings (Figure \ref{Fig4.4}A, Table \ref{Tab4.1}, est. growth exclosure: -0.004, 95\% CI: -0.051 -- 0.042 vs. control: 0.005, 95\% CI: -0.043 -- 0.053). 
+
+Excluding birds from \textit{Q. rubra} saplings led to 5.7\% more leaf area loss (Figure \ref{Fig4.3}, Table \ref{Tab4.1}, est. herbivory level exclosure: 26.5\%, 95\% CI: 14.0 -- 39.0 vs. control: 20.8\%, 95\% CI: 11.1 -- 30.4), which decreased relative sapling growth by 0.009 (Figure \ref{Fig4.4}A, Table \ref{Tab4.1}). The level of herbivory was not associated with edge distance or proportion of \textit{Q. rubra} in the overstorey (Figure \ref{Fig4.2}, Table \ref{Tab4.1}). However, sapling growth was positively and directly associated with the proportion of \textit{Q. rubra} in the overstorey (Figure \ref{Fig4.4}B), with an increase in monocultures of \textit{Q. rubra} (est. 0.068, 95\% CI 0.016 -- 0.120) compared to stands where \textit{Q. rubra} was absent in the overstorey (est. 0.028 95\% CI: -0.023 -- 0.079).\footnote{Herbivory levels from the text differ from Figure \ref{Fig4.2}. In Figure \ref{Fig4.2} raw data is given, in the text estimates from the models, corrected for variation in edge distance.} \footnote{Negative growth was due to random breaking of tops of saplings.} 
+
+
+	\section{Discussion}
+
+	Saplings of all three study species showed higher herbivory levels within exclosures in accordance with expectations (prediction i), but only \textit{Q. robur} showed a larger effect of excluding avian predators closer to the forest edge (prediction ii) and if birds were excluded, higher herbivory levels under an overstorey with more conspecific trees (prediction iii). Higher herbivory levels only led to reduced sapling growth for \textit{Q. rubra} and \textit{F. sylvatica} (prediction iv), and \textit{Q. rubra} unexpectedly showed increased growth under an overstorey with a larger proportion of conspecific trees.
+
+	\medskip
+
+	Based on our experiments, resource concentration effects were only apparent in \textit{Q. robur} saplings when birds were excluded. This result implies that the presence of natural enemies may hinder the detection of resource concentration effects in observational studies. \textit{Quercus robur} hosts a high density and diversity of herbivores, among which many caterpillars that form a crucial prey source for insectivorous birds (\citealt{Naef-Daenzer2000}). Insectivorous birds have been shown to use leaf damage on oaks (\citealt{Heinrich1983}; \citealt{Gunnarsson2018}) or herbivore-induced oak volatiles  (\citealt{Amo2013}) as cues to find such prey. Although insectivorous birds such as tits (Paridae) sample all trees in their territory, they preferably forage on the trees with the highest prey density (\citealt{Naef-Daenzer2000}). This could counteract the increased herbivory levels found on \textit{Q. robur} saplings underneath \textit{Q. robur} overstories, and explain why resource concentration effects on this species were only present in the absence of birds. The bird community could potentially also explain the increased herbivory on \textit{Q. robur} saplings planted in monocultures compared to mixtures, which has been observed in young plantations (e.g. \citealt{Alalouni2014}; \citealt{Setiawan2014}), given that young forests do not have a similar bird community as mature forests (e.g. \citealt{Whytock2018}). Contrary to \textit{Q. robur}, \textit{F. sylvatica} and \textit{Q. rubra} support low abundances of herbivores, which are most often generalists (\citealt{Brandle2001}; REF Gossner; \citealt{Branco2015}). As the latter do not show strong responses to resource concentration (\citealt{Jactel2005}; \citealt{Castagneyrol2014}), differences in diet niche breadth of associated herbivores may hence explain variation in effect sizes of overstorey composition on the regeneration potential of tree species. 
+
+	Herbivory levels on \textit{Q. robur} saplings outside the exclosures increased further from the forest edge, but this effect was absent  for saplings growing inside the exclosures. Together, these results indicate that top-down control by avian predators is stronger near forest edges, which conforms with results from earlier studies based on experiments with artificial caterpillars (\citealt{Barbaro2014}; \citealt{Gonzalez-Gomez2017}). In our study, this pattern was only apparent in \textit{Q. robur} saplings, possibly driven by the preference for this tree species by insectivorous birds discussed earlier. Yet, similar edge effects were not found in an earlier study on mature \textit{Q. robur} trees in the same study plots (\citealt{vanSchrojensteinLantman2018}). As resistance against herbivory starts to build up in saplings and reaches its highest level in mature trees (\citealt{Boege2005}), the ontogeny of resistance may explain why findings differ between both studies. In support of this, herbivory levels on mature trees were lower than on saplings for \textit{Q. rubra} (9.25\% vs. 18.6\%) and \textit{F. sylvatica} (2.67\% vs. 10.4\%), but not on \textit{Q. robur} (12.9\% vs. 11.3\%; \citealt{vanSchrojensteinLantman2018}).
+
+	\medskip
+
+	Higher herbivory levels led to a reduced growth of \textit{F. sylvatica} and \textit{Q. rubra} saplings, but not of \textit{Q. robur}. This could be due to the limited time span of our study, as negative effects of herbivory on tree growth are known to increase in subsequent growing seasons (\citealt{Marquis1994}; \citealt{Mooney2007}). Hence, it is possible that the effect could emerge for \textit{Q. robur} in the subsequent growing seasons as well. Additional to the negative effects of herbivory on sapling growth, a higher proportion of \textit{Q. rubra} in the overstorey showed a direct positive relationship with the growth of \textit{Q. rubra} saplings, while such a link was not apparent in both other tree species. Our results indicate that this relationship is not mediated by differences in herbivory levels, and can thus not be explained by a reduced herbivore community on this tree species in its introduced range (REF Gossner; \citealt{Branco2015}). Alternatively, increased sapling growth under higher \textit{Q. rubra} cover could result from higher light transmission, which has earlier been shown to be a limiting factor for \textit{Q. rubra} growth (\citealt{Dey1996}). Another recent study in the same plots showed higher light transmission during leaf expansion in \textit{Q. rubra} overstories than in both other tree species, although this effect disappeared after leaves had fully flushed (\citealt{Sercu2017}). Leaf burst of tree saplings is often earlier than that in the overstorey, and light availability during this period can be critically important for sapling fitness (\citealt{Augspurger2005}). Other potential factors such as competitive vegetation, soil or litter conditions seem less likely to explain the observed sapling growth pattern in \textit{Q. rubra}, as plots with \textit{Q. rubra} overstories were characterized by a dense shrub layer of \textit{Q. rubra} saplings and a low litter quality (\citealt{DeGroote2017}, \citealt{DeGroote2018}). 
+
+	\medskip
+
+An often-cited mechanism facilitating non-native plant invasions is proposed by the enemy-release hypothesis (reviewed by \citealt{Liu2006}), which states that once introduced to a non-native region, plants experience a decrease in regulation by herbivores and other natural enemies. While it has been found that compared to native \textit{Quercus} species, \textit{Q. rubra} is avoided by generalist and specialist seed predators in Europe (e.g. \citealt{Myczko2014}; \citealt{Bogdziewicz2019}), we show that saplings of \textit{Q. rubra} suffer from herbivory at similarly high levels as native \textit{Q. robur} (see also \citealt{Wein2016}; \citealt{vanSchrojensteinLantman2018}), and that this herbivory decreases sapling growth. Comparable information on herbivory pressure on \textit{Q. rubra} in the native range would be necessary to formally test for enemy release as an underlying driver of the spread of this species in European forests, yet our results suggest that native herbivores may be a factor slow down the early stages of \textit{Q. rubra} invasions. However, we also observed that \textit{Q. rubra} sapling growth increased with an increasing abundance of \textit{Q. rubra} in the overstorey. Along the same lines, a recent study in Poland observed that the recruitment of \textit{Q. rubra} is higher in \textit{Q. rubra} monocultures than in mixtures with native \textit{Q. petraea} (\citealt{Bogdziewicz2019}). These findings suggest a positive density dependence once \textit{Q. rubra} is established, which can accelerate invasion speeds once high densities have been reached (\citealt{Brooker2008}). 
+
+	Guidelines for sustainable forest management emphasize the importance of natural regeneration (\citealt{denOuden2010}). Compared to sapling plantations, natural regeneration has considerable economic and ecological advantages (\citealt{Burgi2003}; \citealt{Vranckx2014}), stressing the importance of optimizing sapling survival and growth under the canopy of managed forests. Our study indicates that insectivorous birds can control herbivory on saplings and we found direct cascading effects on sapling growth. These combined results hence provide direct empirical support for the important ecosystem services provided by birds (\citealt{Sekercioglu2012}), and plead for forest management strategies that promote a high functional diversity of insectivorous birds. This could be achieved by creating, or maintaining, gradual forest edges (\citealt{Terraube2016}; \citealt{Melin2018}) and low canopy cover and by conserving large trees and deadwood in managed stands (\citealt{Bereczki2014}; \citealt{Penone2018}). Note, however, that insectivorous birds may also benefit \textit{Q. rubra} seedlings and hence bolster their invasion potential. When insectivorous birds are absent or occur at low densities, a diverse overstorey may compensate for the lower top-down control by decreasing herbivory levels on saplings of tree species with a high number of associated specialist herbivores, such as \textit{Q. robur} in our study.
+
+	\medskip
+
+In conclusion, our study shows that herbivory on saplings in temperate forests can be influenced by top-down control --especially at forest edges-- and overstorey species composition with consequences for sapling growth and natural forest regeneration. More generally, our study provides insight into the complex, multitrophic interactions that drive sapling growth in forest stands located within fragmented landscapes.
+
+
+	\medskip
+
+
+	\subsection*{Acknowledgements}
+
+	\begin{footnotesize}
+	Financial support for this research was provided via the UGent GOA (Concerted Research Actions) project “Scaling up Functional Biodiversity Research: from Individuals to Landscapes and Back (TREEWEB)”. We thank the private forest owners and the Flemish Forest and Nature Agency (ANB) for granting access to their property. We also thank Liesbeth De Neve for advice on the study design and Bram Sercu and Robbe De Beelde for help with the field work. Furthermore, we thank Margot Vanhellemont for useful comments on the first draft of this manuscript.
+	\end{footnotesize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BACK MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\appendix
+\setlength{\thumbwidth}{0cm}
+\setlength{\thumbheight}{0cm}
+\tikzset{
+	thumb/.style={
+		%draw=black,
+		fill=white,
+		text=white,
+		minimum height=0cm, %\thumbheight,
+		text width=0cm,
+		outer sep=0pt,%   outer sep=10pt,
+		font=\sffamily\Large,
+	}
+}
+
+
+
+
+	%%%%%%%%%%%%%%%%  SUMMARY   %%%%%%%%%%%%%%%%%%%%%%%
+	\csname @openrightfalse\endcsname	
+	\clearpage
+	\thispagestyle{plain} % empty 
+	\CenterWallPaper{1.1}{CH3.jpg}
+	\backmatter
+	\newpage{\thispagestyle{empty}\cleardoublepage}
+	\ClearWallPaper
+	\chapter{Summary} 
+	
+	Biodiversity is globally under threat. Understanding the impact of biodiversity loss is therefore key. In the research field of biodiversity and ecosystem functioning, there is still a gap to bridge from experimental settings to more complex natural habitats. The biodiversity-ecosystem functioning studies are often focussed on plants. Yet, the entire food web can undergo changes as a result of plant biodiversity loss. Then again, the relationship of biodiversity on higher trophic levels and functions may not be as straightforward as expected. Many studies have now shown that plant identity effects may be more important than plant diversity effects per se. However, higher trophic levels may be less impacted by changes in the plant community. Considering that forest fragmentation is a key driver of biodiversity loss, it is interesting that in general the combined effects of biodiversity and spatial context on ecosystem functioning and diversity of higher trophic levels are lacking. A more diverse ecosystem may suppress negative effects of for instance fragmentation. The aim of this thesis was to understand how tree diversity impacts the composition and functioning of forest arthropods of different trophic levels and how this is affected by the spatial configuration of edge effects. Additionally, the aim was to disentangle the effects of tree diversity and forest composition. Tree diversity should promote the diversity of arthropods, as well as enhance their associated functioning. I expected that tree diversity and tree species composition effects are stronger for herbivores than for predators. Predators are generally expected to be more impacted by the spatial context. Close to the forest edge the diversity of arthropods were expected to be higher than further away. However, edge effects were expected to be less strong in more diverse forests.
+
+	
+	\newpage
+	\thispagestyle{empty}
+	\chapter{Samenvatting} 
+	
+	Biodiversiteit wordt wereldwijd bedreigd. Het is daarom belangrijk om de gevolgen van biodiversiteitsverlies te begrijpen. In het onderzoek naar de relatie tussen biodiversiteit en ecosysteem functioneren is er nog een grote slag te slaan door op te schalen van experimentele settings naar complexere natuurlijke systemen zoals bossen. De onderzoeken naar biodiversiteit-ecosysteem functionaliteit zijn vaak gefocust planten. Toch kan het hele voedselweb veranderingen ondergaan als gevolg van verlies aan biodiversiteit van planten. Meerdere studies hebben inmiddels aangetoond dat de effecten van plant identiteit mogelijk belangrijker zijn dan de effecten die verandering in plantdiversiteit tot gevolg heeft. Met name de hoogste trofische niveaus worden naar alle waarschijnlijkheid minder beïnvloed door veranderingen in de plantgemeenschap. Een interessante piste voor het verder opschalen van biodiversiteitsonderzoek is het meenemen van de ruimtelijke context. Bosfragmentatie is bijvoorbeeld een van de belangrijke oorzaken van biodiversiteitsverlies, maar de gevolgen van een combinatie van biodiversieitsverlies en fragmentatie zijn amper bekend. Het is mogelijk dat diverse bossen bestand kunnen zijn tegen negatieve gevolgen van bosfragmentatie. Het doel van dit proefschrift is om te begrijpen hoe boomdiversiteit de samenstelling en het functioneren van arthropoden van verschillende trofische niveaus beïnvloedt, en hoe dit wijzigt wanneer de ruimtelijke context veranderd. Daarnaast is het de bedoeling om de effecten van boomdiversiteit en bossamenstelling te onderscheiden. Boomdiversiteit zou de diversiteit van arthropoden moeten bevorderen en hun bijbehorende functioneren verbeteren. Ik verwachtte dat boomdiversiteit en samenstelling van boomspeciesamenstelling sterker zijn voor herbivoren dan voor predatoren. Van predatoren wordt over het algemeen verwacht dat ze meer worden beïnvloed door de ruimtelijke context. Dicht bij de bosrand werd verwacht dat de diversiteit van geleedpotigen hoger zou zijn dan verder weg. Randeffecten werden echter naar verwachting minder sterk in meer diverse bossen.
+
+	
+
+                                
+	
+
+%%%%% DANKWOORD %%%%
+
+\newpage
+\thispagestyle{plain} % empty
+\mbox{}
+	\CenterWallPaper{1.1}{CHACK.jpg}
+	\clearpage{\thispagestyle{empty}\cleardoublepage}
+	\ClearWallPaper	
+	\chapter{Acknowledgements}
+	
+	
+Acknowledgements… Nu ja, laat ik er maar “dankwoord” van maken. Waar het schrijven van de thesis niet altijd even makkelijk ging, is het opschrijven van mijn gevoel van dankbaarheid misschien nog wel het lastigste. En dan is schrijven toch net iets eenvoudiger in het Nederlands (dat wel wat vervlaamst is de afgelopen 5 jaar) dan in het Engels.  
+
+	 
+
+
+%%%%% List of publications %%%%
+
+	\newpage
+	\thispagestyle{empty}
+
+	\chapter{List of publications}
+	\setlength{\parindent}{2em}
+
+	$\bullet$ \textbf{van Schrojenstein Lantman, I. M.}, Hertzog, L. R., Vandegehuchte, M. L., Martel, A., Verheyen, K., Lens, L. \& Bonte, D. (2019). Forest edges, tree diversity and tree identity change leaf miner diversity in a temperate forest. \textit{Insect Conservation and Diversity}.\\
+
+	$\bullet$ Dekeukeleire, D., Hertzog, L. R., Vantieghem, P., \textbf{van Schrojenstein Lantman, I. M.}, Sercu, B.K., Boonyarittichaikij, R., Martel, A., Verheyen, K., Bonte, D., Strubbe, D. \& Lens, L. (2019). Forest fragmentation and tree species composition jointly shape breeding performance of two avian insectivores. \textit{Forest Ecology and Management}, 443:95--105.\\
+
+	$\bullet$ Hertzog, L. R., Boonyarittichaikij, R., Dekeukeleire, D., De Groote, S. R. E., \textbf{van Schrojenstein Lantman, I. M.}, Sercu, B. K., Hannah Keely Smith, de la Peña, E., Vandegehuchte, M. L., Bonte, D., Martel, A., Verheyen, K., Lens, L. \& Baeten, L. (2019). Forest fragmentation modulates effects of tree species richness and composition on ecosystem multifunctionality. \textit{Ecology}, e02653.\\
+
+	$\bullet$ Dekeukeleire, D.*,\textbf{van Schrojenstein Lantman, I. M.}*, Hertzog, L. R., Vandegehuchte, M. L., Strubbe, D., Vantieghem, P., Martel, A., Verheyen, K., Bonte, D.$^\circ$ \& Lens, L.$^\circ$ (2019). Avian top-down control affects invertebrate herbivory and sapling growth more strongly than overstorey species composition in temperate forest fragments. \textit{Forest Ecology and Management}, 442:1--9.\\
+
+	\begin{footnotesize}* Shared first authorship
+
+	$^\circ$ Shared senior authorship \end{footnotesize}
+
+	\newpage
+
+	$\bullet$ \textbf{van Schrojenstein Lantman, I. M.}, Hertzog, L. R., Vandegehuchte, M. L., Martel, A., Verheyen, K., Lens, L. \& Bonte, D. (2018). Leaf herbivory is more impacted by forest composition than by tree diversity or edge effects. \textit{Basic and Applied Ecology}, 29:79--88.\\
+
+	$\bullet$ De Groote, S. R. E., \textbf{van Schrojenstein Lantman, I. M.}, Sercu, B. K., Dekeukeleire, D., Boonyarittichaikij, R., Smith, H. K., De Beelde, R., Ceunen, K., Vantieghem, P., Matheve, H., De Neve, L., Vanhellemont, M., Baeten, L., de la Peña, E., Bonte, D., Martel, A., Verheyen, K. \& Lens, L. (2017). Tree species identity outweighs the effects of tree species diversity and forest fragmentation on understorey diversity and composition. \textit{Plant Ecology and Evolution}, 150:229--239.\\
+
+	$\bullet$ van Klink R. \& \textbf{van Schrojenstein Lantman, I. M.} (2014). Effecten van kwelderbeweiding op spinnen en insecten. \textit{Entomologische Berichten}, 75:188--199.\\
+
+	$\bullet$ Krab, E. J., \textbf{van Schrojenstein Lantman, I. M.}, Cornelissen, J. H. C. \& Berg, M. P. (2013). How extreme is an extreme climatic event to a subarctic peatland springtail community? \textit{Soil Biology \& Biochemistry}, 59:16--24.\\ 
+
+
+	
+
+	\begingroup 
+	\small
+	\singlespace
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Bibliography  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		\newpage
+	\thispagestyle{empty}
+\setlength{\thumbwidth}{0cm}
+\setlength{\thumbheight}{0cm}
+	\bibliographystyle{bibliodutch2}%elsarticle-harv_M2
+	\begin{footnotesize}
+	\bibliography{library}
+	\end{footnotesize} 
+	\endgroup
+	\onehalfspace
+	
+
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Supplementary information  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\definecolor{dimgray}{rgb}{0.41, 0.41, 0.41} 
+\setlength{\thumbwidth}{0cm}
+\setlength{\thumbheight}{0cm}
+	\newpage
+	\addcontentsline{toc}{chapter}{Appendices}
+	\chapter*{Appendix 4.1}
+	\lettergroup{\thechapter}
+	\chaptermark{Appendices}
+	\noindent
+	
+	\textbf{Species list of sampled leaf miners}.The number and percentage found are given for the all sampled leaf miners, and subdivided per tree species. The genus of the host of the leaf miners are taken from \citet{Ellis2001}, which includes a list of scientific papers per leaf miner species on which the information is based. \textit{Bucculatrix} spp. on \textit{Q. rubra} can be either \textit{B. ulmella} or \textit{B. ainsliella}. In order to avoid counting double species, when calculating species richness and diversity, \textit{B. ulmella} was considered as \textit{Bucculatrix} spp. \textit{Caloptilia} spp. consist of two possible species, \textit{Caloptilia alchimiella} and \textit{Caloptilia robustella}, which cannot be distinguished based on the mines. \textit{Coleophora} spp. were species that could not confidently be identified. In the calculating species richness and diversity they were considered as species, since there occurrence in plot was so rare that there was no overlap with the identified species. \textit{Phyllonorycter} spp. on \textit{F. sylvatica} are either \textit{P. messaniella} or \textit{P. maestingella} that could not confidently be identified. They were not taken into account when calculating species richness or diversity. On \textit{Q. robur} there are 10 possible species. \textit{P. messaniella} is the only one that can occur on hosts other than trees from the \textit{Quercus} genus. \textit{P. sublautella} can also occur \textit{Q. robur}. In calculating species richness and diversity. \textit{P. messaniella} and \textit{P. sublautella} were considered as \textit{Phyllonorycter} spp.
+
+%% Appendix 3.1
+	\begin{sidewaystable}
+	 \begin{scriptsize}
+	  \begin{center}
+	\begin{tabular}{llrrrrrrrrl}
+\toprule 
+	 &  & \multicolumn{2}{c}{\textbf{Total}} & \multicolumn{2}{c}{\textbf{\textit{F. sylvatica}}} & \multicolumn{2}{c}{\textbf{\textit{Q. robur}}} & \multicolumn{2}{c}{\textit{\textbf{Q. rubra}}} & \textbf{Hosts}  \\
+	\textbf{Species} & \textbf{Order} & \textbf{\#} & \textbf{\%} & \textbf{\#} & \textbf{\%} & \textbf{\#} & \textbf{\%} & \textbf{\#} & \textbf{\%} &  \\
+	\textit{Bucculatrix ulmella} & Lepidoptera & 951 & 12.25 &  &  & 951 & 14.69 &  &  & \textit{Quercus \& Castanea} \\
+\textit{Bucculatrix thoracella} & Lepidoptera & 21 & 0.27 & 21 & 2.25 &  &  &  &  & \begin{tabular}[l]{@{}l@{}}\textit{Fagus, Acer, Aesculus, Alnus, Betulus, Carpinus,}\\ \textit{Castanea, Sorbus \& Tilia} \end{tabular}\\
+\textit{Bucculatrix} spp. & Lepidoptera & 325 & 4.19 &  &  &  &  & 325 & 91.29 & \textit{Quercus} \\
+\textit{Caloptilia} spp. & Lepidoptera & 23 & 0.30 & 4 & 0.43 & 18 & 0.28 & 1 & 0.28 & \textit{Quercus, Fagus \& Castanea} \\
+\textit{Coleophora ibipenella} & Lepidoptera & 1 & 0.01 &  &  & 1 & 0.02 &  &  & \textit{Quercus} \\
+\textit{Coleophora lutipenella} & Lepidoptera & 10 & 0.13 & 1 & 0.11 & 9 & 0.14 &  &  & \textit{Quercus \& Castanea} \\
+\textit{Colephora currucipennella} & Lepidoptera & 1 & 0.01 & 1 & 0.11 &  &  &  &  & \begin{tabular}[l]{@{}l@{}}\textit{Quercus, Fagus, Betula, Carpinus, Corylus, Malus,}\\ \textit{Prunus, Pyrus, Salix \& Sorbus}\end{tabular} \\
+\textit{Colephora flavipennella} & Lepidoptera & 19 & 0.24 &  &  & 14 & 0.22 & 5 & 1.40 & \textit{Quercus \& Castanea} \\
+\textit{Coleophora} spp. & Lepidoptera & 3 & 0.04 & 1 & 0.11 & 2 & 0.03 &  &  &  \\
+\textit{Ectoedemia albifasciella} & Lepidoptera & 182 & 2.34 &  &  & 182 & 2.81 &  &  & \textit{Quercus (\& Castanea)} \\
+\textit{Ectoedemia quinquella} & Lepidoptera & 60 & 0.77 &  &  & 58 & 0.90 & 2 & 0.56 & \textit{Quercus} \\
+\textit{Ectoedemia subbimaculella} & Lepidoptera & 1 & 0.01 &  &  & 1 & 0.02 &  &  & \textit{Quercus \& Castanea} \\
+\textit{Incurvia oehlmanniella} & Lepidoptera & 3 & 0.04 & 3 & 0.32 &  &  &  &  & \begin{tabular}[l]{@{}l@{}}\textit{Fagus, Acer, Carpinus, Cornus, Malus, Prunus,}\\ \textit{Rubus \& Vaccinium} \end{tabular}\\
+\textit{Orchestes avellanae} & Coleoptera & 5 & 0.06 &  &  & 5 & 0.08 &  &  & \textit{Quercus} \\
+\textit{Orchestes quercus} & Coleoptera & 1 & 0.01 &  &  & 1 & 0.02 &  &  & \textit{Quercus} \\
+\textit{Parornix fagivora} & Lepidoptera & 113 & 1.46 & 113 & 12.12 &  &  &  &  & \textit{Fagus} \\
+\textit{Phyllonorycter maestingella} & Lepidoptera & 435 & 5.60 & 435 & 46.67 &  &  &  &  & \textit{Fagus} \\
+\textit{Phyllonorycter messaniella} & Lepidoptera & 36 & 0.46 & 36 & 3.86 &  &  &  &  & \begin{tabular}[l]{@{}l@{}}\textit{Quercus, Fagus, Carpinus, Castanea,}\\ \textit{Prunus \& Tilia} \end{tabular}\\
+\textit{Phyllonorycter sublautella} & Lepidoptera & 10 & 0.13 &  &  &  &  & 10 & 2.81 & \textit{Quercus} \\
+\textit{Phyllonorycter} spp. & Lepidoptera & 4170 & 53.72 & 10 & 1.07 & 4160 & 64.25 &  &  &  \\
+\textit{Profenusa pygmaea} & Hymenoptera & 19 & 0.24 &  &  & 15 & 0.23 & 4 & 1.12 & \textit{Quercus \& Castanea} \\
+\textit{Stigmella atricapitella} & Lepidoptera & 14 & 0.18 &  &  & 14 & 0.22 &  &  & \textit{Quercus} \\
+\textit{Stigmella basiguttella} & Lepidoptera & 47 & 0.61 &  &  & 47 & 0.73 &  &  & \textit{Quercus \& Castanea} \\
+\textit{Stigmella hemargyrella} & Lepidoptera & 138 & 1.78 & 138 & 14.81 &  &  &  &  & \textit{Fagus} \\
+\textit{Stigmella roborella} & Lepidoptera & 244 & 3.14 &  &  & 238 & 3.68 & 6 & 1.69 & \textit{Quercus} \\
+\textit{Stigmella ruficapitella} & Lepidoptera & 165 & 2.13 &  &  & 165 & 2.55 &  &  & \textit{Quercus} \\
+\textit{Stigmella samiatella} & Lepidoptera & 7 & 0.09 &  &  & 7 & 0.11 &  &  & \textit{Quercus \& Castanea} \\
+\textit{Stigmella tityrella} & Lepidoptera & 169 & 2.18 & 169 & 18.13 &  &  &  &  & \textit{Fagus} \\
+\textit{Tischeria decidua} & Lepidoptera & 2 & 0.03 &  &  & 2 & 0.03 &  &  & \textit{Quercus \& Castanea} \\
+\textit{Tischeria dodoneae} & Lepidoptera & 4 & 0.05 &  &  & 4 & 0.06 &  &  & \textit{Quercus \& Castanea} \\
+\textit{Tischeria ekebladella} & Lepidoptera & 584 & 7.52 &  &  & 581 & 8.97 & 3 & 0.84 & \textit{Quercus \& Castanea} \\
+\bottomrule
+\end{tabular}
+	  \end{center}
+	\end{scriptsize}
+	\end{sidewaystable}
+
+\newpage
+	\chapter*{Appendix 4.2}
+	\lettergroup{\thechapter}
+	
+\textbf{Full resampling script.} \texttt{data} is the new dataframe to which the results of each cycle is added. \texttt{id\_plot} is the unique number for each sampled plot. \texttt{Dabun} is the derived leaf miner abundance, \texttt{Dspec} leaf miner species richness and \texttt{Ddiv} leaf miner diversity as the exponent of Shannon.
+
+	\texttt{Mresamp} is the raw data in which every row is a single sampled leaf. Information about this leaf, such as the species richness of the plot (\texttt{specrich}), or a unique ID for each tree species per plot (\texttt{ts\_id}), and the abundance of each leaf miner species is included.
+
+	Each cycle is repeated 250 times. If the plot is a monoculture (\texttt{specrich == "1"}), all 150 leaves are taken as they are. In two-species mixtures (\texttt{specrich == "2"}), a random sample of 75 leaves per tree species per plot (a list (list2) of 44 unique \texttt{ts\_id}) is taken, which sums up to 150 leaves in total per plot. In three-species mixtures (\texttt{specrich == "3"})  a random sample of 50 leaves per tree species per plot (a list (\texttt{list3}) of 21 unique \texttt{ts\_id}), which also sums up to 150 leaves in total per plot.
+
+	The selection of the leaves is each time bound to a dataset (\texttt{resamp}). This dataset is then used to select the species matrix per plot (\texttt{RESAMP}). This dataset has the plot IDs as rows, the leaf miner species the columns and the cells as the total abundance of that species per plot. The for each plot the diversity (\texttt{Ddiv}), species richness (\texttt{Dspec}) and abundance (\texttt{Dabun}) is calculated. The plot ID (\texttt{plotinfo\$id\_plot}), abundance, species richness and diversity are then added to a dataframe (\texttt{data}).
+	
+	After the 250 cycles the data is averaged for each plot, creating dataframe on which the analyses were performed (\texttt{data2}).
+\newpage
+\begin{scriptsize}\begin{tt}
+library(dplyr) library(vegan) \\
+list2 = tsinfo\$ts\_id[tsinfo\$specrich=="2"] \\
+list3 = tsinfo\$ts\_id[tsinfo\$specrich=="3"] \\
+data = data.frame(matrix(ncol = 4, nrow = 0))  \\
+colnames(data) = c("id\_plot","Dabun","Dspec","Ddiv")  \\
+ \\
+for(i in 1:250)\{  \\
+resamp = Mresamp \%\textgreater\%  \\
+  filter(specrich == "1")  \\
+for(j in 1:44)\{  \\
+resamp2 = Mresamp \%\textgreater\%  \\
+  filter(specrich == "2" \& ts\_id == list2[j] ) \%\textgreater\%  \\
+  sample\_n(75, replace=FALSE)  \\
+resamp = rbind(resamp,resamp2)      \}  \\
+ \\
+for(k in 1:21)\{  \\
+resamp3 = Mresamp \%\textgreater\%  \\
+  filter(specrich == "3" \& ts\_id == list3[k] ) \%\textgreater\%  \\
+  sample\_n(50, replace=FALSE)  \\
+resamp = rbind(resamp,resamp3)      \}  \\
+ \\
+RESAMP = resamp \%\textgreater\%  \\
+  gather("species","number",30:58) \%\textgreater\%  \\
+  group\_by(id\_plot,species) \%\textgreater\%  \\
+  summarise(number = sum(number)) \%\textgreater\%  \\
+  spread(species,number)  \\
+Ddiv = exp(diversity(RESAMP[,c(2:30)],"shannon"))  \\
+Dspec = specnumber(RESAMP[,c(2:30)])  \\
+Dabun = rowSums(RESAMP[,c(2:30)])  \\
+dataX = data.frame(plotinfo\$id\_plot,Dabun,Dspec,Ddiv)  \\
+colnames(dataX)[1] = "id\_plot"  \\
+data = rbind(data,dataX)      \}  \\
+ \\
+data = data \%\textgreater\%  \\
+  left\_join(plotinfo)  \\
+data2 = data[,c(1:4)] \%\textgreater\%  \\
+  group\_by(id\_plot) \%\textgreater\%  \\
+  summarize\_all(funs(mean)) \%\textgreater\%  \\
+  left\_join(plotinfo)  
+ \end{tt} \end{scriptsize} 
+ 
+
+
+\end{document}
