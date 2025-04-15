@@ -4,7 +4,7 @@ In this repository, you will find notes from the coding club meetings at TEREC (
 
 ## List of past sessions
 
-(Status 11/10/2024)
+(Status 15/04/2025)
 
 * 11-03-2024: Intro and teasers into Bayesian
 * 22-04-2024: Bayesian analyses with brms
@@ -13,7 +13,7 @@ In this repository, you will find notes from the coding club meetings at TEREC (
 
 ## List of upcoming sessions
 
-* 26-11-2024: ggplot
+* 22-04-2025: ggplot
 
 ## Topics that have a high chance to get scheduled soon
 * INLA: Bayesian spatio-temporal models
@@ -25,7 +25,7 @@ In this repository, you will find notes from the coding club meetings at TEREC (
 
 # How to use
 
-You can just download the whole files in your computer by clicking the clone/download button. If you are a Git user you are welcome to fork the repo and open pull request if you want to submit some changes. To avoid downloading the whole repo every time, if you have git installed on your computer you can open a terminal and just enter:
+You can just download the whole files on your computer by clicking the clone/download button. If you are a Git user you are welcome to fork the repo and open pull request if you want to submit some changes. To avoid downloading the whole repo every time, if you have git installed on your computer you can open a terminal and just enter:
 
 ```
 git clone https://github.com/FemkeBatsleer/TEREC-coding-club.git

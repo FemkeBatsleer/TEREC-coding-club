@@ -1,0 +1,298 @@
+---
+title: "ggplot2 Coding Club EXERCISES"
+author: "Charlotte Taelman and Heleen Van Ransbeeck"
+date: "2025-01-13"
+output:
+  html_document: default
+---
+
+# Coding club on ggplot2
+
+In this coding club, we are going to uncover all the secrets of ggplot2. If you've ever been frustrated with making beautiful visualizations in R, you're in the right place! We're here to take you on a journey, from the basics of ggplot2 to advanced techniques, ensuring you learn everything you need to bring your data to life visually.
+
+There are 4 main parts to this coding club 
+* Introduction 
+* Basics & highlights with short exercises
+* Issues
+* Two advanced exercises from scratch
+    * Dataset from the London firebrigade on number of rescues of animals over the years
+    * Dataset from 3 species of penguins in the Antarctic region
+ 
+# The ggplot2 library and its close friends...
+```{r, warning=F, message=F}
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(gganimate)
+library(png)
+library(gifski)
+library(ggstream)
+library(ggforce)
+library(reshape2)
+library(wesanderson)
+library(showtext)
+font_add(family = "ggfont", regular = "./HelloSpark.ttf")
+font_add(family = "penguin", regular = "./WinterPenguin.ttf")
+showtext_auto()
+```
+
+
+## Practicing Basics & highlights
+```{r}
+orange_data = force(Orange) # dataset on growth of orange trees (Tree ID - days old - circumference)
+orange_data$Tree = factor(orange_data$Tree, levels = c("1", "2", "3", "4", "5")) #specifies the order in which the Tree IDs should appear
+head(orange_data)
+```
+
+
+**1. Basic aesthetics in a simple scatter plot**
+
+```{r}
+# 1.1 make a basic point graph with age and circumference
+ggplot(orange_data, aes(x = age, y = circumference)) +
+  geom_point()
+
+# 1.2 add color to the points according to the age
+ggplot(orange_data, aes(x = age, y = circumference, color = age)) + 
+  geom_point()                                                      
+
+# 1.3 color all the points in orange, and shape them like as a cross
+
+
+# 1.4 add color to the points according to the tree ID & shape the points like a cross
+
+
+```
+
+
+**2. Basic geometries & facets**
+```{r}
+# 2.1 add a smoother to the scatterplot
+ggplot(orange_data, aes(x = age, y = circumference)) +
+  geom_point() +
+  geom_smooth()
+
+# 2.2 make a boxplot of the lengths of the trees per age, colored
+orange_data$age_categorical<-factor(orange_data$age) # transform the ages into a categorical variable
+
+
+# 2.3 facet the point graph into a plot for each tree 
+
+
+# 2.4 zoom in on age = 484
+ggplot(orange_data, aes(x = age, y = circumference, color = Tree)) +
+  geom_point() + 
+  facet_zoom(y=age_categorical=='484') 
+
+
+
+
+```
+
+
+**3. Basic statistics**
+```{r}
+# 3.1 make a barplot with average circumference per age and add a label above each bar
+ggplot(orange_data, aes(x = age_categorical, y = circumference))+
+  geom_bar(stat='summary')+ # stat='summary' calculates several statistics, the mean is default
+  geom_text(aes(label = after_stat(y)), stat='summary', vjust = -0.5) #after_stat() uses the computed means from the summary statistics to plot. Without after_stat(), geom_text will plot all y values
+
+#3.2 plot a linear regression (with smoother) for circumference per age 
+
+
+#3.3 plot the regression per tree
+
+```
+
+
+**4. Coordinates, themes, color palettes**
+```{r}
+# 4.1 make the following barplot horizontally
+ggplot(orange_data, aes(x = age_categorical, y = circumference))+
+  geom_bar(stat='summary')+ 
+  geom_text(aes(label = after_stat(y)), stat='summary', hjust = -0.1)
+
+
+# 4.2 add a theme (eg. bw, minimal ...) to the following linear regression
+ggplot(orange_data, aes(x = age, y = circumference, color = Tree)) +
+  geom_point() +
+  geom_smooth(method = "lm") 
+
+# 4.3 add a personalized color palette for the trees (e.g. wes anderson)
+ggplot(orange_data, aes(x = age, y = circumference, color = Tree)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() 
+
+# 4.4 add a title to the point graph and change colors per tree into an RColorBrewer color palette
+ggplot(orange_data, aes(x = age, y = circumference, color = Tree)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() 
+
+```
+
+
+## Advanced exercises
+
+### Dataset 1: rescues of animals in London by the firebrigade***
+
+```{r, warning=F, message=F}
+# Some data cleaning first
+rescues = read_xlsx("./animal_rescues_UK.xlsx")
+rescues$time = as.Date(rescues$date_time_of_call, format = "%d/%m/%Y %H:%M")
+rescues$time_char = as.character(rescues$time)
+rescues_tidy = rescues %>% separate(time_char, sep = "-", into = c("year", "month", "day")) %>%
+  dplyr::select(-c(1, 13, 14))
+head(rescues)
+```
+
+
+**Try to VISUALIZE the answers to the following questions:**
+
+#### 1.1 In what years do we find the most rescues for dogs, cats and foxes and deer? 
+- point + line plot (x = time, y = number of rescues)
+- faceting per animal
+
+FANCY EXTRAS
+- with a font
+- personalized color palette, for every animal
+
+```{r, warning=F, message=F}
+# first some tidying, extracting only the data of the animals that we want
+rescues_number = rescues_tidy %>% filter(animal_group_parent == "Cat" | animal_group_parent == "Dog" | animal_group_parent == "Deer" | animal_group_parent == "Fox") %>%
+  group_by(year, animal_group_parent) %>% # counting the number of rescues per animal
+  summarise(Rescues = n())
+
+#basic solution
+
+
+#fancy solution
+
+```
+
+#### 1.2 When do most rescues take place during the year? Is this different for domestic animals (cat, dog) vs. wildlife (deer, fox)? 
+- density plot (density of rescues for every animal throughout the year)
+
+FANCY EXTRA
+- with a font
+- personalized color palette, for every animal
+- gganimate: show one density plot at the time and switch the species every two seconds
+
+```{r, warning=F, message=F}
+# filter year 2010 and the wanted animal group
+rescues_2010 = rescues_tidy %>% 
+  filter(year == 2010) %>% 
+  filter(animal_group_parent == "Cat" | animal_group_parent == "Dog" | animal_group_parent == "Deer" | animal_group_parent == "Fox")
+
+#basic solution
+
+
+# fancy solution
+
+```
+
+
+
+#### 1.3 What is the proportion of rescues of cats, dogs, horses, birds, foxes, deer, throughout the years? Does this change? 
+- stream graph
+
+FANCY EXTRAS
+- with a font
+- personalized color palette, for every animal
+
+```{r, warning=F, message=F}
+# filter the wanted animals
+rescues_dist =  rescues_tidy %>% 
+  filter(!grepl("Unknown", animal_group_parent)) %>%
+  filter(animal_group_parent == "Cat" | animal_group_parent == "Dog" | animal_group_parent == "Bird" | animal_group_parent == "Fox" | animal_group_parent == "Deer" | animal_group_parent == "Horse") %>%
+  group_by(year, animal_group_parent) %>% # counting the number of rescues per animal
+  summarise(Rescues = n())
+
+#basic solution
+
+#fancy solution
+
+```
+
+#### 1.4 In what area in London do we find the most rescues for cats? 
+- bar plot, with labels
+
+FANCY EXTRAS
+- with a font
+- personalized color palette, for every animal
+
+
+```{r, warning=F, message=F}
+# filter the cats
+rescues_cat = rescues_tidy %>% 
+  filter(animal_group_parent == "Cat") %>%
+  group_by(borough) %>%
+  summarise(Rescues = n())
+
+# basic solution
+
+
+# fancy solution
+
+
+```
+
+
+
+
+### Dataset 2: Penguins
+
+```{r, warning=F, message=F}
+penguins = read_xlsx("./penguins.xlsx")
+head(penguins)
+```
+
+
+**Try to remake the graphs in the slides**
+
+#### 2.1 Violin plot
+```{r, warning=F, message=F}
+# data filtering
+penguins_long = penguins %>%
+  pivot_longer(cols = c("bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"), names_to = "trait", values_to = "trait_value")
+
+```
+
+
+
+#### 2.2 Scatter plot with linear regression line
+```{r}
+# filter animals with known sex
+penguins_sex = penguins %>% filter(sex == "male" | sex == "female")
+ 
+```
+
+#### 2.3 Box plot, 2 factors
+```{r}
+
+```
+
+#### 2.4 Boxplot, facet
+```{r, warning = F, message=F}
+
+```
+
+
+#### 2.5 Correlation matrix
+```{r, warning = F, message=F}
+penguins_corr = na.omit(penguins %>% dplyr::select(c(3:6))) # only the numeric traits, no NA's
+corr <- round(cor(penguins_corr), 2)
+head(corr)
+melted_corr <- melt(corr)
+melted_corr
+
+```
+
+
+
+Congratulations!!
+
+You just became a ggplot master and can start making your beauties even prettier!
+Have fun becoming a graphic designer ;)
