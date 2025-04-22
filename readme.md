@@ -4,16 +4,17 @@ In this repository, you will find notes from the coding club meetings at TEREC (
 
 ## List of past sessions
 
-(Status 15/04/2025)
+(Status 22/04/2025)
 
 * 11-03-2024: Intro and teasers into Bayesian
 * 22-04-2024: Bayesian analyses with brms
 * 17-06-2024: dplyr & tidyr, best practices and tips & tricks
 * 24-09-2024: LaTeX
+* 22-04-2025: ggplot2
 
 ## List of upcoming sessions
 
-* 22-04-2025: ggplot
+* October 2025: shiny apps
 
 ## Topics that have a high chance to get scheduled soon
 * INLA: Bayesian spatio-temporal models
